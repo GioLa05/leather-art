@@ -1,0 +1,1280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LEATHER//ART — Specimen Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;500;700&family=Pinyon+Script&display=swap" rel="stylesheet" />
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<style>
+  :root {
+    --tan: #B5895E;
+    --choc: #3D1F0F;
+    --bone: #F0E4D2;
+    --mid: #8B6B4D;
+    --hair: rgba(61,31,15,.55);
+    --hair-strong: #3D1F0F;
+    --display: "Archivo Black", "Helvetica Neue", Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --script: "Pinyon Script", "Snell Roundhand", cursive;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { background: var(--tan); }
+  body {
+    background: var(--tan);
+    color: var(--choc);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.45;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    cursor: none;
+  }
+  @media (max-width: 720px), (pointer: coarse) {
+    body { cursor: auto; }
+    .cursor, .cursor-trail { display: none !important; }
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: none; }
+  @media (pointer: coarse) { button { cursor: pointer; } }
+
+  .mono { font-family: var(--mono); font-feature-settings: "tnum" 1, "ss01" 1; }
+  .display { font-family: var(--display); letter-spacing: -0.02em; }
+  .script { font-family: var(--script); }
+
+  .hairline { background: var(--hair-strong); height: 0.5px; width: 100%; display: block; }
+  .vrule { background: var(--hair-strong); width: 0.5px; align-self: stretch; }
+
+  /* ─── Custom cursor ─────────────────────────────────────── */
+  .cursor, .cursor-trail {
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99999;
+    will-change: transform;
+  }
+  .cursor {
+    width: 14px; height: 14px;
+    transform: translate3d(-50%, -50%, 0);
+  }
+  .cursor::before, .cursor::after {
+    content: ""; position: absolute; background: var(--choc);
+  }
+  .cursor::before { left: 50%; top: 0; bottom: 0; width: 0.5px; transform: translateX(-50%); }
+  .cursor::after { top: 50%; left: 0; right: 0; height: 0.5px; transform: translateY(-50%); }
+  .cursor-trail {
+    width: 22px; height: 22px; border: 0.5px solid var(--choc);
+    transform: translate3d(-50%, -50%, 0);
+    transition: transform 90ms linear;
+  }
+
+  /* ─── Status bar ────────────────────────────────────────── */
+  .statusbar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--tan);
+    border-bottom: 0.5px solid var(--hair-strong);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 18px;
+    padding: 8px 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1;
+  }
+  .statusbar .logo {
+    height: 36px; width: auto; display: block; image-rendering: -webkit-optimize-contrast;
+  }
+  .status-stream {
+    display: flex; align-items: center; gap: 0; flex-wrap: nowrap; overflow: hidden;
+    color: var(--choc);
+  }
+  .status-stream > span {
+    padding: 0 14px;
+    border-left: 0.5px solid var(--hair-strong);
+    white-space: nowrap;
+  }
+  .status-stream > span:first-child { border-left: 0; padding-left: 0; }
+  .live-dot {
+    display: inline-block; width: 7px; height: 7px;
+    background: var(--choc);
+    margin-right: 6px;
+    transform: translateY(0px);
+    animation: pulse 1.6s ease-in-out infinite;
+    vertical-align: middle;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: .25; transform: scale(.7); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .live-dot { animation: none; }
+  }
+  .lang { display: flex; align-items: center; gap: 0; }
+  .lang button {
+    padding: 4px 9px;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--mid); letter-spacing: 0.04em;
+    border-left: 0.5px solid var(--hair-strong);
+  }
+  .lang button:first-child { border-left: 0; }
+  .lang button.active { color: var(--choc); font-weight: 700; }
+  .lang button:hover { color: var(--choc); }
+
+  @media (max-width: 720px) {
+    .statusbar { grid-template-columns: auto 1fr; gap: 10px; padding: 8px 12px; }
+    .status-stream { display: none; }
+    .statusbar .logo { height: 30px; }
+  }
+
+  /* ─── Section frame ─────────────────────────────────────── */
+  .section { padding: 48px 32px; border-bottom: 0.5px solid var(--hair-strong); position: relative; }
+  .section-tag {
+    position: absolute; top: 12px; left: 32px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--mid);
+  }
+  .section-tag .num { color: var(--choc); margin-right: 8px; }
+  @media (max-width: 720px) {
+    .section { padding: 36px 18px; }
+    .section-tag { left: 18px; }
+  }
+
+  /* ─── Hero ──────────────────────────────────────────────── */
+  .hero { padding-top: 70px; padding-bottom: 0; }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 0.5px 1fr 0.5px 360px;
+    gap: 28px;
+    align-items: stretch;
+  }
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 22px; }
+    .hero-grid .vrule { display: none; }
+  }
+  .hero-eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--mid);
+    display: flex; gap: 14px; margin-bottom: 18px;
+  }
+  .hero-eyebrow .k { color: var(--choc); }
+  .hero-name {
+    font-family: var(--display);
+    font-size: clamp(64px, 11vw, 168px);
+    line-height: 0.86;
+    color: var(--choc);
+    letter-spacing: -0.035em;
+    margin: 0;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .hero-name .slash {
+    font-family: var(--mono); font-weight: 400;
+    font-size: 0.42em; vertical-align: 0.35em;
+    color: var(--mid); padding: 0 0.18em;
+  }
+  .hero-sub {
+    margin-top: 22px;
+    font-family: var(--mono); font-size: 13px; line-height: 1.55;
+    color: var(--choc); max-width: 38ch;
+  }
+  .hero-quote {
+    font-family: var(--script);
+    font-size: clamp(28px, 3.4vw, 44px);
+    color: var(--choc); line-height: 1.05;
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 0.5px solid var(--hair-strong);
+    max-width: 22ch;
+  }
+  .hero-quote::before { content: "“"; color: var(--mid); }
+  .hero-quote::after  { content: "”"; color: var(--mid); }
+
+  .hero-image {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--bone);
+    border: 0.5px solid var(--hair-strong);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .hero-image .index {
+    position: absolute; top: 10px; left: 12px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--choc);
+  }
+  .hero-image .stamp {
+    position: absolute; bottom: 10px; right: 12px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--choc);
+  }
+  .hero-image .silhouette {
+    width: 78%; height: 78%;
+  }
+  .hero-image .scan {
+    position: absolute; left: -2%; right: -2%;
+    height: 18px;
+    background: linear-gradient(180deg, transparent, rgba(61,31,15,.18), transparent);
+    border-top: 0.5px solid var(--choc);
+    border-bottom: 0.5px solid var(--choc);
+    pointer-events: none;
+    animation: scan 1.6s ease-out 1 forwards;
+    top: -20px;
+  }
+  @keyframes scan {
+    0%   { top: -20px; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { top: 102%; opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-image .scan { display: none; }
+  }
+
+  .specsheet {
+    font-family: var(--mono); font-size: 12px; line-height: 1.55;
+    color: var(--choc);
+  }
+  .specsheet h3 {
+    font-family: var(--mono); font-weight: 700;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--mid); margin: 0 0 14px;
+  }
+  .specsheet .row {
+    display: grid; grid-template-columns: 12ch 1fr;
+    gap: 14px; padding: 7px 0;
+    border-top: 0.5px solid var(--hair-strong);
+  }
+  .specsheet .row:last-child { border-bottom: 0.5px solid var(--hair-strong); }
+  .specsheet .row .k { color: var(--mid); text-transform: uppercase; letter-spacing: 0.08em; font-size: 10.5px; padding-top: 2px; min-width: 11ch; }
+  .specsheet .row .v { color: var(--choc); }
+  .specsheet .row .v .big { font-family: var(--display); font-size: 22px; line-height: 1; letter-spacing: -0.02em; display: inline-block; margin-right: 6px; }
+
+  .hero-selector {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    border-top: 0.5px solid var(--hair-strong);
+  }
+  @media (max-width: 720px) {
+    .hero-selector { grid-template-columns: repeat(3, 1fr); }
+  }
+  .hero-selector button {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 14px 10px; text-align: left;
+    border-right: 0.5px solid var(--hair-strong);
+    transition: background 120ms ease;
+    min-width: 0;
+  }
+  .hero-selector button:last-child { border-right: 0; }
+  .hero-selector button:hover, .hero-selector button.active { background: var(--bone); }
+  .hero-selector .idx { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--mid); }
+  .hero-selector .nm  { font-family: var(--display); font-size: 13px; letter-spacing: -0.01em; color: var(--choc); text-transform: uppercase; line-height: 1.05; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hero-selector button.active .idx { color: var(--choc); }
+
+  /* ─── Marquee ───────────────────────────────────────────── */
+  .marquee-wrap {
+    background: var(--choc); color: var(--bone);
+    border-top: 0.5px solid var(--choc); border-bottom: 0.5px solid var(--choc);
+    overflow: hidden;
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 14px 0;
+  }
+  .marquee-track {
+    display: inline-flex; gap: 0; white-space: nowrap;
+    animation: marquee 60s linear infinite;
+    will-change: transform;
+  }
+  .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
+  .marquee-track > span {
+    padding: 0 28px;
+    border-left: 0.5px solid rgba(240,228,210,.4);
+  }
+  .marquee-track > span:first-child { border-left: 0; }
+  .marquee-track .star { color: var(--bone); opacity: .7; padding: 0 18px; }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track { animation: none; }
+  }
+
+  /* ─── Specimen grid ─────────────────────────────────────── */
+  .grid-head {
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: end; gap: 24px; margin-bottom: 28px;
+  }
+  .grid-head h2 {
+    margin: 0; font-family: var(--display);
+    font-size: clamp(36px, 5vw, 64px); letter-spacing: -0.02em;
+    color: var(--choc); text-transform: uppercase; line-height: 0.95;
+  }
+  .grid-head .meta {
+    font-family: var(--mono); font-size: 11px; color: var(--mid); letter-spacing: 0.1em;
+    text-transform: uppercase; text-align: right;
+  }
+  .specimens {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: minmax(220px, auto);
+    gap: 0;
+    border-top: 0.5px solid var(--hair-strong);
+    border-left: 0.5px solid var(--hair-strong);
+  }
+  .spec {
+    position: relative;
+    border-right: 0.5px solid var(--hair-strong);
+    border-bottom: 0.5px solid var(--hair-strong);
+    padding: 18px 18px 16px;
+    display: flex; flex-direction: column;
+    background: var(--tan);
+    transition: background 200ms ease;
+    min-height: 360px;
+  }
+  /* asymmetric spans */
+  .spec.s1 { grid-column: span 5; }
+  .spec.s2 { grid-column: span 4; }
+  .spec.s3 { grid-column: span 3; }
+  .spec.s4 { grid-column: span 4; }
+  .spec.s5 { grid-column: span 5; }
+  .spec.s6 { grid-column: span 3; }
+
+  @media (max-width: 980px) {
+    .specimens { grid-template-columns: repeat(6, 1fr); }
+    .spec.s1, .spec.s4, .spec.s5 { grid-column: span 6; }
+    .spec.s2, .spec.s3, .spec.s6 { grid-column: span 3; }
+  }
+  @media (max-width: 600px) {
+    .specimens { grid-template-columns: 1fr; }
+    .spec, .spec.s1, .spec.s2, .spec.s3, .spec.s4, .spec.s5, .spec.s6 { grid-column: span 1; }
+  }
+
+  .spec-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 12px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
+    color: var(--mid); text-transform: uppercase;
+  }
+  .spec-head .sn { color: var(--choc); }
+  .spec-idx {
+    font-family: var(--display);
+    font-size: clamp(56px, 7vw, 96px);
+    line-height: 0.85;
+    color: var(--choc); letter-spacing: -0.04em;
+    margin: 18px 0 6px;
+  }
+  .spec-idx sub {
+    font-family: var(--mono); font-weight: 400;
+    font-size: 11px; letter-spacing: 0.1em;
+    color: var(--mid); margin-left: 4px;
+    vertical-align: 0.3em;
+  }
+  .spec-name {
+    font-family: var(--display); font-size: clamp(20px, 2vw, 26px);
+    color: var(--choc); text-transform: uppercase; letter-spacing: -0.02em;
+    line-height: 1.02; margin: 0 0 12px;
+  }
+  .spec-silhouette {
+    flex: 1; min-height: 120px; display: flex; align-items: center; justify-content: center;
+    margin: 6px -6px 14px;
+    position: relative;
+  }
+  .spec-silhouette svg { width: 78%; height: 100%; max-height: 180px; }
+  .spec-meta {
+    font-family: var(--mono); font-size: 11px; line-height: 1.6;
+    color: var(--choc);
+    border-top: 0.5px solid var(--hair-strong);
+    padding-top: 10px;
+  }
+  .spec-meta div { display: grid; grid-template-columns: 7ch 1fr; gap: 10px; }
+  .spec-meta .k { color: var(--mid); text-transform: uppercase; letter-spacing: 0.08em; font-size: 10px; padding-top: 2px; }
+
+  /* schematic overlay on hover */
+  .schematic {
+    position: absolute; inset: 0;
+    background: var(--choc); color: var(--bone);
+    opacity: 0; pointer-events: none;
+    transition: opacity 220ms ease;
+    padding: 18px;
+    display: flex; flex-direction: column; gap: 10px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+  }
+  .spec:hover .schematic { opacity: 1; }
+  .schematic .head {
+    display: flex; justify-content: space-between; text-transform: uppercase;
+    color: var(--bone); opacity: .8;
+  }
+  .schematic .draw { flex: 1; position: relative; }
+  .schematic .draw svg { width: 100%; height: 100%; }
+  .schematic .foot {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
+    text-transform: uppercase; font-size: 10px; opacity: 0.95;
+    border-top: 0.5px solid rgba(240,228,210,.5);
+    padding-top: 10px;
+  }
+  .schematic .foot .k { color: rgba(240,228,210,.6); display: block; margin-bottom: 4px; letter-spacing: 0.1em; }
+  @media (prefers-reduced-motion: reduce) {
+    .schematic { transition: none; }
+  }
+
+  /* ─── Telemetry ─────────────────────────────────────────── */
+  .telemetry-wrap { background: var(--tan); }
+  .telemetry-head {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 24px;
+    margin-bottom: 22px; flex-wrap: wrap;
+  }
+  .telemetry-head h2 {
+    margin: 0; font-family: var(--display);
+    font-size: clamp(28px, 4vw, 48px); letter-spacing: -0.02em;
+    color: var(--choc); text-transform: uppercase;
+  }
+  .telemetry-head .timestamp {
+    font-family: var(--mono); font-size: 11px; color: var(--mid);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .telemetry {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 0.5px solid var(--hair-strong);
+    border-left: 0.5px solid var(--hair-strong);
+  }
+  @media (max-width: 880px) { .telemetry { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .telemetry { grid-template-columns: 1fr; } }
+  .tcell {
+    border-right: 0.5px solid var(--hair-strong);
+    border-bottom: 0.5px solid var(--hair-strong);
+    padding: 18px 18px 20px;
+    display: flex; flex-direction: column; gap: 10px;
+    min-height: 170px;
+  }
+  .tcell .lbl {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+    color: var(--mid); text-transform: uppercase;
+    display: flex; justify-content: space-between;
+  }
+  .tcell .val {
+    font-family: var(--display); font-size: clamp(34px, 4vw, 52px);
+    line-height: 1; letter-spacing: -0.03em; color: var(--choc);
+    font-variant-numeric: tabular-nums;
+  }
+  .tcell .val .unit {
+    font-family: var(--mono); font-weight: 400;
+    font-size: 12px; letter-spacing: 0.04em; color: var(--mid);
+    margin-left: 6px;
+  }
+  .tcell .sub { font-family: var(--mono); font-size: 11px; color: var(--choc); }
+  .tcell .bar {
+    height: 6px; background: var(--bone); border: 0.5px solid var(--hair-strong);
+    overflow: hidden; position: relative;
+  }
+  .tcell .bar i { display: block; height: 100%; background: var(--choc); transition: width 800ms ease; }
+
+  /* ─── Footer ────────────────────────────────────────────── */
+  .footer {
+    background: var(--tan);
+    border-top: 0.5px solid var(--hair-strong);
+    padding: 56px 32px 28px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .footer .logo-big {
+    width: 100%; max-width: 1100px; margin: 0 auto 8px;
+    aspect-ratio: 1 / 1; max-height: 360px;
+    display: block;
+    object-fit: contain;
+  }
+  .footer-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 0.5px solid var(--hair-strong);
+    padding-top: 18px;
+    gap: 24px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--choc);
+  }
+  .footer-grid .k { color: var(--mid); display: block; margin-bottom: 6px; font-size: 10px; letter-spacing: 0.1em; }
+  @media (max-width: 720px) {
+    .footer { padding: 36px 18px 20px; }
+    .footer-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ─── Tweaks panel overrides ───────────────────────────── */
+  .twk-panel { font-family: var(--mono) !important; }
+</style>
+</head>
+<body>
+
+<!-- custom cursor -->
+<div class="cursor-trail" id="cursorTrail" aria-hidden="true"></div>
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+
+<!-- ─── STATUS BAR ─────────────────────────────────────────── -->
+<header class="statusbar" role="banner">
+  <a href="#top" aria-label="Leather Art home">
+    <img class="logo" src="assets/leather-art-logo.png" alt="Leather Art" />
+  </a>
+
+  <div class="status-stream" id="statusStream">
+    <span><span class="mono" data-k="status.archive">ARCHIVE</span> · <span id="ts" class="mono">2099.05.04 · 14:07:42 UTC</span></span>
+    <span><span class="mono" data-k="status.coords">COORDS</span> 41.7151°N / 44.8271°E</span>
+    <span><span class="mono" data-k="status.batch">BATCH</span> LA-2099/Δ-014</span>
+    <span><span class="live-dot" aria-hidden="true"></span><span data-k="status.live">LIVE</span></span>
+  </div>
+
+  <nav class="lang" aria-label="Language">
+    <button data-lang="EN" class="active">EN</button>
+    <button data-lang="KA">KA</button>
+    <button data-lang="RU">RU</button>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ─── HERO ─────────────────────────────────────────────── -->
+  <section class="section hero">
+    <span class="section-tag"><span class="num">§01</span><span data-k="tag.specimen">Specimen of record</span></span>
+    <div class="hero-grid">
+
+      <div>
+        <div class="hero-eyebrow">
+          <span><span class="k" data-k="hero.eyebrow.kind">SPECIMEN</span> 003 / 006</span>
+          <span><span class="k" data-k="hero.eyebrow.tan">TANNAGE</span> VEG · 28D</span>
+          <span><span class="k" data-k="hero.eyebrow.year">YIELD</span> MMXCIX</span>
+        </div>
+        <h1 class="hero-name" id="heroName">CARRARA<br/><span class="slash">//</span>STEED</h1>
+        <p class="hero-sub" id="heroSub">A full-grain shell archived from the Tuscan corridor. Hand-burnished over twenty-eight days, edge-painted in chocolate, and stamped with the field-coordinates of its origin pasture.</p>
+        <p class="hero-quote script" id="heroQuote">A hide is a manuscript; the tannin is the ink.</p>
+      </div>
+
+      <div class="vrule"></div>
+
+      <div class="hero-image" aria-hidden="true">
+        <span class="index mono">IDX. 003 / 006 · ARC.LA-Δ</span>
+        <span class="stamp mono">⌖ 41.7151°N · 44.8271°E</span>
+        <span class="scan" id="scanline"></span>
+        <svg class="silhouette" viewBox="0 0 200 240" fill="none" stroke="#3D1F0F" stroke-width="0.6">
+          <!-- A satchel-like silhouette with measurement marks -->
+          <path d="M30 70 L30 200 Q30 220 50 220 L150 220 Q170 220 170 200 L170 70 Z" />
+          <path d="M30 70 L40 50 L160 50 L170 70" />
+          <path d="M70 50 Q70 22 100 22 Q130 22 130 50" />
+          <path d="M30 100 L170 100" />
+          <circle cx="100" cy="135" r="5" />
+          <!-- measurement ticks -->
+          <path d="M14 70 L24 70 M14 200 L24 200 M14 70 L14 200" stroke-dasharray="0 4" stroke-linecap="round" stroke-width="0.8"/>
+          <text x="6" y="138" font-family="JetBrains Mono" font-size="6" fill="#3D1F0F" transform="rotate(-90 6 138)">340 mm</text>
+          <path d="M30 230 L170 230 M30 226 L30 234 M170 226 L170 234" stroke-dasharray="0 4" stroke-linecap="round" stroke-width="0.8"/>
+          <text x="86" y="240" font-family="JetBrains Mono" font-size="6" fill="#3D1F0F">280 mm</text>
+        </svg>
+      </div>
+
+      <div class="vrule"></div>
+
+      <aside class="specsheet" aria-label="Specimen spec sheet">
+        <h3 data-k="hero.spec.title">// MATERIAL TELEMETRY</h3>
+        <div class="row"><span class="k" data-k="hero.spec.tannage">Tannage</span><span class="v" id="specTannage"><span class="big">28</span>days · vegetable, mimosa</span></div>
+        <div class="row"><span class="k" data-k="hero.spec.grain">Grain</span><span class="v" id="specGrain"><span class="big">7.4</span>fibers / mm² · full</span></div>
+        <div class="row"><span class="k" data-k="hero.spec.origin">Origin</span><span class="v" id="specOrigin">Kakheti pasture · Δ-014</span></div>
+        <div class="row"><span class="k" data-k="hero.spec.finish">Finish</span><span class="v" id="specFinish"><span class="big">142</span>hrs · hand-burnish</span></div>
+        <div class="row"><span class="k" data-k="hero.spec.weight">Weight</span><span class="v" id="specWeight"><span class="big">684</span>grams · ±6g</span></div>
+        <div class="row"><span class="k" data-k="hero.spec.edge">Edge</span><span class="v" id="specEdge">painted, 4 coats, choc.</span></div>
+        <div class="row"><span class="k" data-k="hero.spec.cert">Certificate</span><span class="v" id="specCert">LA·CRT·2099·003</span></div>
+      </aside>
+    </div>
+
+    <!-- specimen selector -->
+    <div class="hero-selector" id="heroSelector" role="tablist" aria-label="Specimen selector"></div>
+  </section>
+
+  <!-- ─── MARQUEE ──────────────────────────────────────────── -->
+  <div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee-track" id="marqueeTrack"></div>
+  </div>
+
+  <!-- ─── SPECIMEN GRID ────────────────────────────────────── -->
+  <section class="section">
+    <span class="section-tag"><span class="num">§02</span><span data-k="tag.archive">The current archive</span></span>
+    <div class="grid-head">
+      <h2 data-k="grid.title">Six<br/>specimens.</h2>
+      <div class="meta">
+        <div data-k="grid.meta1">Edition of 84 · 2099 cycle</div>
+        <div data-k="grid.meta2">Curated · Tbilisi → Worldwide</div>
+      </div>
+    </div>
+    <div class="specimens" id="specimensGrid"></div>
+  </section>
+
+  <!-- ─── TELEMETRY ────────────────────────────────────────── -->
+  <section class="section telemetry-wrap">
+    <span class="section-tag"><span class="num">§03</span><span data-k="tag.telemetry">Material telemetry</span></span>
+    <div class="telemetry-head">
+      <h2 data-k="telemetry.title">Live readout from the vault.</h2>
+      <span class="timestamp"><span data-k="telemetry.synced">SYNCED</span> · <span id="telTs">14:07:42</span></span>
+    </div>
+    <div class="telemetry" id="telemetryGrid"></div>
+  </section>
+
+  <!-- ─── FOOTER ───────────────────────────────────────────── -->
+  <footer class="footer">
+    <span class="section-tag" style="position: static;"><span class="num">§04</span><span data-k="tag.colophon">Colophon</span></span>
+    <img class="logo-big" src="assets/leather-art-logo.png" alt="Leather Art" />
+    <div class="footer-grid">
+      <div>
+        <span class="k" data-k="footer.k.house">HOUSE</span>
+        LEATHER//ART
+      </div>
+      <div>
+        <span class="k" data-k="footer.k.cycle">CYCLE</span>
+        MMXCIX · Δ-014
+      </div>
+      <div>
+        <span class="k" data-k="footer.k.coords">COORDINATES</span>
+        41.7151°N / 44.8271°E
+      </div>
+      <div>
+        <span class="k" data-k="footer.k.copy">COPYRIGHT</span>
+        © 2099 LEATHER//ART · ALL HIDES RESERVED
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<!-- Tweaks panel mount -->
+<div id="tweaks-root"></div>
+
+<script>
+/* ─── i18n: translations ─────────────────────────────────── */
+const I18N = {
+  EN: {
+    "status.archive":"ARCHIVE",
+    "status.coords":"COORDS",
+    "status.batch":"BATCH",
+    "status.live":"LIVE · TANNING",
+    "tag.specimen":"Specimen of record",
+    "tag.archive":"The current archive",
+    "tag.telemetry":"Material telemetry",
+    "tag.colophon":"Colophon",
+    "hero.eyebrow.kind":"SPECIMEN",
+    "hero.eyebrow.tan":"TANNAGE",
+    "hero.eyebrow.year":"YIELD",
+    "hero.spec.title":"// MATERIAL TELEMETRY",
+    "hero.spec.tannage":"Tannage",
+    "hero.spec.grain":"Grain",
+    "hero.spec.origin":"Origin",
+    "hero.spec.finish":"Finish",
+    "hero.spec.weight":"Weight",
+    "hero.spec.edge":"Edge",
+    "hero.spec.cert":"Certificate",
+    "grid.title":"Six<br/>specimens.",
+    "grid.meta1":"Edition of 84 · 2099 cycle",
+    "grid.meta2":"Curated · Tbilisi → Worldwide",
+    "telemetry.title":"Live readout from the vault.",
+    "telemetry.synced":"SYNCED",
+    "telemetry.vault":"Vault humidity",
+    "telemetry.queue":"Hides in queue",
+    "telemetry.hours":"Avg. tannage hours",
+    "telemetry.hands":"Hands at the bench",
+    "telemetry.vault.sub":"target band 58–62%",
+    "telemetry.queue.sub":"of 84 ed. allocated",
+    "telemetry.hours.sub":"rolling 30-day mean",
+    "telemetry.hands.sub":"artisans on shift",
+    "footer.k.house":"HOUSE",
+    "footer.k.cycle":"CYCLE",
+    "footer.k.coords":"COORDINATES",
+    "footer.k.copy":"COPYRIGHT",
+    /* per-spec metadata labels */
+    "spec.k.tan":"TAN",
+    "spec.k.grm":"GRM",
+    "spec.k.org":"ORG"
+  },
+  KA: {
+    "status.archive":"არქივი",
+    "status.coords":"კოორდ.",
+    "status.batch":"პარტია",
+    "status.live":"ცოცხალი · თრიმვლა",
+    "tag.specimen":"ნიმუში ჩანაწერისა",
+    "tag.archive":"მიმდინარე არქივი",
+    "tag.telemetry":"მასალის ტელემეტრია",
+    "tag.colophon":"კოლოფონი",
+    "hero.eyebrow.kind":"ნიმუში",
+    "hero.eyebrow.tan":"თრიმვლა",
+    "hero.eyebrow.year":"მოსავალი",
+    "hero.spec.title":"// მასალის ტელემეტრია",
+    "hero.spec.tannage":"თრიმვლა",
+    "hero.spec.grain":"ბოჭკო",
+    "hero.spec.origin":"წარმოშობა",
+    "hero.spec.finish":"დასრულება",
+    "hero.spec.weight":"წონა",
+    "hero.spec.edge":"კიდე",
+    "hero.spec.cert":"სერტიფიკატი",
+    "grid.title":"ექვსი<br/>ნიმუში.",
+    "grid.meta1":"გამოცემა 84-დან · 2099 ციკლი",
+    "grid.meta2":"კურირებული · თბილისი → მსოფლიო",
+    "telemetry.title":"ცოცხალი მონაცემი სარდაფიდან.",
+    "telemetry.synced":"სინქრონი",
+    "telemetry.vault":"სარდაფის ტენიანობა",
+    "telemetry.queue":"ტყავი რიგში",
+    "telemetry.hours":"საშ. თრიმვის საათები",
+    "telemetry.hands":"ხელები სამუშაო მაგიდასთან",
+    "telemetry.vault.sub":"მიზნობრივი 58–62%",
+    "telemetry.queue.sub":"84 გამოცემიდან გადანაწ.",
+    "telemetry.hours.sub":"30-დღიანი მცოცავი საშ.",
+    "telemetry.hands.sub":"ხელოსნები ცვლაში",
+    "footer.k.house":"სახლი",
+    "footer.k.cycle":"ციკლი",
+    "footer.k.coords":"კოორდინატები",
+    "footer.k.copy":"საავტ. უფლ.",
+    "spec.k.tan":"თრიმ.",
+    "spec.k.grm":"გრამი",
+    "spec.k.org":"წარმ."
+  },
+  RU: {
+    "status.archive":"АРХИВ",
+    "status.coords":"КООРД.",
+    "status.batch":"ПАРТИЯ",
+    "status.live":"В ЭФИРЕ · ДУБЛЕНИЕ",
+    "tag.specimen":"Образец из реестра",
+    "tag.archive":"Текущий архив",
+    "tag.telemetry":"Телеметрия материала",
+    "tag.colophon":"Колофон",
+    "hero.eyebrow.kind":"ОБРАЗЕЦ",
+    "hero.eyebrow.tan":"ДУБЛЕНИЕ",
+    "hero.eyebrow.year":"УРОЖАЙ",
+    "hero.spec.title":"// ТЕЛЕМЕТРИЯ МАТЕРИАЛА",
+    "hero.spec.tannage":"Дубление",
+    "hero.spec.grain":"Волокно",
+    "hero.spec.origin":"Происхождение",
+    "hero.spec.finish":"Отделка",
+    "hero.spec.weight":"Вес",
+    "hero.spec.edge":"Край",
+    "hero.spec.cert":"Сертификат",
+    "grid.title":"Шесть<br/>образцов.",
+    "grid.meta1":"Тираж 84 · цикл 2099",
+    "grid.meta2":"Кураторский · Тбилиси → Мир",
+    "telemetry.title":"Живые данные из хранилища.",
+    "telemetry.synced":"СИНХРОН.",
+    "telemetry.vault":"Влажность хранилища",
+    "telemetry.queue":"Шкур в очереди",
+    "telemetry.hours":"Средн. часы дубления",
+    "telemetry.hands":"Рук у верстака",
+    "telemetry.vault.sub":"коридор 58–62%",
+    "telemetry.queue.sub":"из 84 в тираже",
+    "telemetry.hours.sub":"среднее за 30 дней",
+    "telemetry.hands.sub":"мастеров в смене",
+    "footer.k.house":"ДОМ",
+    "footer.k.cycle":"ЦИКЛ",
+    "footer.k.coords":"КООРДИНАТЫ",
+    "footer.k.copy":"АВТ. ПРАВА",
+    "spec.k.tan":"ДУБ.",
+    "spec.k.grm":"ГРАММ",
+    "spec.k.org":"ПРОИСХ."
+  }
+};
+
+/* ─── Specimens data ─────────────────────────────────────── */
+const SPECIMENS = [
+  { id:"01", sn:"LA·001·2099", idx:"01", span:"s1",
+    name:{ EN:"Tbilisi Tote", KA:"თბილისის ტომარა", RU:"Тбилисский тоут" },
+    sub:{ EN:"A vegetable-tanned daily carry, edge-painted by hand and stamped with vault coordinates.",
+          KA:"მცენარეულად თრიმული ყოველდღიური ჩანთა, ხელით შეღებილი კიდით და სარდაფის კოორდინატებით.",
+          RU:"Растительно-дубленая повседневная сумка, край окрашен вручную, со штампом координат." },
+    quote:{ EN:"A hide is a manuscript; the tannin is the ink.",
+            KA:"ტყავი ხელნაწერია; ტანინი — მელანი.",
+            RU:"Шкура — рукопись; танин — чернила." },
+    spec:{ tan:"21d · veg, mimosa", grain:"6.9 fibers / mm² · full", origin:"Kakheti · Δ-011",
+           finish:"118 hrs · hand-burnish", weight:"540 g · ±5", edge:"painted · 3 coats", cert:"LA·CRT·2099·001" },
+    meta:[ ["TAN","VEG · 21D"], ["GRM","540"], ["ORG","Δ-011"] ],
+    silhouette:"tote"
+  },
+  { id:"02", sn:"LA·002·2099", idx:"02", span:"s2",
+    name:{ EN:"Mtkvari Wallet", KA:"მტკვრის საფულე", RU:"Кошелёк Мтквари" },
+    sub:{ EN:"Bifold wallet from a single shell. Skived to 1.1mm at the fold; saddle-stitched in waxed linen.",
+          KA:"ერთიანი ნაჭრისგან ბიფოლდი საფულე. დაკეცვაზე 1.1მმ-მდე გათხელებული; ცვილიანი ნაკერით.",
+          RU:"Бифолд из одной детали. Снята до 1,1 мм по сгибу; сшит вощёным льном." },
+    quote:{ EN:"Stitched once. Carried always.",
+            KA:"ერთხელ გაკერილი. სამუდამოდ.",
+            RU:"Сшит однажды. Носится всегда." },
+    spec:{ tan:"14d · veg", grain:"7.2 fibers / mm² · full", origin:"Mtskheta · Δ-008",
+           finish:"54 hrs", weight:"96 g · ±2", edge:"slicked", cert:"LA·CRT·2099·002" },
+    meta:[ ["TAN","VEG · 14D"], ["GRM","096"], ["ORG","Δ-008"] ],
+    silhouette:"wallet"
+  },
+  { id:"03", sn:"LA·003·2099", idx:"03", span:"s3",
+    name:{ EN:"Carrara//Steed", KA:"კარარა//მერანი", RU:"Каррара//Конь" },
+    sub:{ EN:"A full-grain shell from the Tuscan corridor. Twenty-eight days in the pit, hand-burnished.",
+          KA:"სრული ბოჭკოს ნაჭერი ტოსკანის დერეფნიდან. ოცდარვა დღე ორმოში, ხელით გაპრიალებული.",
+          RU:"Полнозернистый раккорд из тосканского коридора. Двадцать восемь дней в яме, ручная полировка." },
+    quote:{ EN:"Patience is the eighth tannin.",
+            KA:"მოთმინება — მერვე ტანინი.",
+            RU:"Терпение — восьмой танин." },
+    spec:{ tan:"28d · veg, mimosa", grain:"7.4 fibers / mm² · full", origin:"Kakheti · Δ-014",
+           finish:"142 hrs · hand-burnish", weight:"684 g · ±6", edge:"painted · 4 coats", cert:"LA·CRT·2099·003" },
+    meta:[ ["TAN","VEG · 28D"], ["GRM","684"], ["ORG","Δ-014"] ],
+    silhouette:"satchel"
+  },
+  { id:"04", sn:"LA·004·2099", idx:"04", span:"s4",
+    name:{ EN:"Field Belt", KA:"ველის ქამარი", RU:"Полевой ремень" },
+    sub:{ EN:"34mm bridle leather, oil-pulled. Solid brass keeper, single tongue, edge-burnished raw.",
+          KA:"34მმ აღკაზმის ტყავი, ზეთით გაჟღენთილი. მთლიანი თითბრი, ერთი ენა, კიდე ნედლი.",
+          RU:"Шорно-седельная кожа 34 мм, маслом. Латунный держатель, один язык, край сырой." },
+    quote:{ EN:"A belt outlives its wearer.",
+            KA:"ქამარი გადარჩება პატრონს.",
+            RU:"Ремень переживает своего владельца." },
+    spec:{ tan:"35d · bridle", grain:"6.4 fibers / mm² · full", origin:"Imereti · Δ-021",
+           finish:"22 hrs", weight:"218 g · ±3", edge:"raw · burnished", cert:"LA·CRT·2099·004" },
+    meta:[ ["TAN","OIL · 35D"], ["GRM","218"], ["ORG","Δ-021"] ],
+    silhouette:"belt"
+  },
+  { id:"05", sn:"LA·005·2099", idx:"05", span:"s5",
+    name:{ EN:"Archive Briefcase", KA:"არქივის ჩემოდანი", RU:"Архивный портфель" },
+    sub:{ EN:"Saddle-stitched two-compartment briefcase. Drum-dyed in chocolate, lined in raw cotton.",
+          KA:"სასადილო ნაკერით ორ-განყოფილებიანი ჩემოდანი. შოკოლადით შეღებილი, ბამბის სარჩული.",
+          RU:"Двухсекционный портфель ручной сшивки. Барабанная окраска шоколад, подкладка хлопок." },
+    quote:{ EN:"It carries the year, not the day.",
+            KA:"ის ატარებს წელიწადს, არა დღეს.",
+            RU:"Носит год, а не день." },
+    spec:{ tan:"32d · veg + drum", grain:"7.0 fibers / mm² · full", origin:"Kakheti · Δ-014",
+           finish:"196 hrs", weight:"1.42 kg · ±20", edge:"painted · 5 coats", cert:"LA·CRT·2099·005" },
+    meta:[ ["TAN","VEG · 32D"], ["GRM","1420"], ["ORG","Δ-014"] ],
+    silhouette:"brief"
+  },
+  { id:"06", sn:"LA·006·2099", idx:"06", span:"s6",
+    name:{ EN:"Notebook 84", KA:"რვეული 84", RU:"Тетрадь 84" },
+    sub:{ EN:"Hand-bound A5 leather notebook. 84 pages of tan card, blind-debossed sigil on the cover.",
+          KA:"ხელით აკინძული A5 ტყავის რვეული. 84 გვერდი, ბრმად დაბეჭდილი ნიშანი ყდაზე.",
+          RU:"A5 тетрадь в кожаном переплёте. 84 страницы тонированного картона, слепое тиснение на обложке." },
+    quote:{ EN:"Eighty-four blank specimens.",
+            KA:"ოთხმოცდაოთხი ცარიელი ნიმუში.",
+            RU:"Восемьдесят четыре пустых образца." },
+    spec:{ tan:"18d · veg", grain:"7.1 fibers / mm² · full", origin:"Mtskheta · Δ-008",
+           finish:"38 hrs · blind-deboss", weight:"312 g · ±4", edge:"raw", cert:"LA·CRT·2099·006" },
+    meta:[ ["TAN","VEG · 18D"], ["GRM","312"], ["ORG","Δ-008"] ],
+    silhouette:"book"
+  }
+];
+
+/* ─── Marquee tokens ─────────────────────────────────────── */
+const MARQUEE = {
+  EN: ["LEATHER//ART · CYCLE MMXCIX","HIDES TANNED IN PITS, NOT MACHINES","EDITION OF 84 — NEVER REPRINTED","HAND-STITCHED 8 SPI · WAXED LINEN","CHOCOLATE EDGE-PAINT · FOUR COATS","ARCHIVED IN TBILISI · 41.7151°N","A HIDE IS A MANUSCRIPT","TANNAGE IS PATIENCE MEASURED IN DAYS"],
+  KA: ["LEATHER//ART · ციკლი MMXCIX","ტყავი თრიმულია ორმოებში, არა მანქანებში","გამოცემა 84 — არასოდეს გადაბეჭდილი","ხელით ნაკერი 8 SPI · ცვილიანი ტილო","შოკოლადის კიდე — ოთხი ფენა","არქივი თბილისში · 41.7151°N","ტყავი ხელნაწერია","თრიმვა მოთმინებაა, დღეებში გაზომილი"],
+  RU: ["LEATHER//ART · ЦИКЛ MMXCIX","ШКУРЫ ДУБЛЕНЫ В ЯМАХ, НЕ В МАШИНАХ","ТИРАЖ 84 — НИКОГДА НЕ ПЕРЕИЗДАЁТСЯ","РУЧНАЯ СШИВКА 8 SPI · ВОЩЁНЫЙ ЛЁН","ШОКОЛАДНЫЙ КРАЙ — ЧЕТЫРЕ СЛОЯ","АРХИВ В ТБИЛИСИ · 41.7151°С","ШКУРА — ЭТО РУКОПИСЬ","ДУБЛЕНИЕ — ТЕРПЕНИЕ В ДНЯХ"]
+};
+
+/* ─── Silhouettes (inline SVG) ───────────────────────────── */
+function silhouette(kind){
+  const s = 'stroke="#3D1F0F" stroke-width="0.8" fill="none" stroke-linejoin="round"';
+  switch(kind){
+    case "tote": return `<svg viewBox="0 0 200 200" ${s}>
+      <path d="M40 70 L40 180 Q40 188 48 188 L152 188 Q160 188 160 180 L160 70 Z"/>
+      <path d="M70 70 Q70 35 100 35 Q130 35 130 70"/>
+      <path d="M40 90 L160 90"/>
+      <path d="M86 130 L114 130"/>
+    </svg>`;
+    case "wallet": return `<svg viewBox="0 0 200 200" ${s}>
+      <rect x="36" y="76" width="128" height="78"/>
+      <path d="M100 76 L100 154"/>
+      <rect x="48" y="92" width="40" height="8"/>
+      <rect x="112" y="92" width="40" height="8"/>
+      <circle cx="142" cy="115" r="4"/>
+    </svg>`;
+    case "satchel": return `<svg viewBox="0 0 200 240" ${s}>
+      <path d="M30 70 L30 200 Q30 220 50 220 L150 220 Q170 220 170 200 L170 70 Z"/>
+      <path d="M30 70 L40 50 L160 50 L170 70"/>
+      <path d="M70 50 Q70 22 100 22 Q130 22 130 50"/>
+      <path d="M30 100 L170 100"/>
+      <circle cx="100" cy="135" r="5"/>
+    </svg>`;
+    case "belt": return `<svg viewBox="0 0 240 120" ${s}>
+      <rect x="20" y="50" width="180" height="20"/>
+      <rect x="200" y="44" width="22" height="32"/>
+      <path d="M210 50 L210 70"/>
+      <circle cx="40" cy="60" r="2.4"/>
+      <circle cx="56" cy="60" r="2.4"/>
+      <circle cx="72" cy="60" r="2.4"/>
+      <circle cx="88" cy="60" r="2.4"/>
+    </svg>`;
+    case "brief": return `<svg viewBox="0 0 240 180" ${s}>
+      <rect x="30" y="50" width="180" height="110"/>
+      <path d="M90 50 Q90 28 120 28 Q150 28 150 50"/>
+      <path d="M30 90 L210 90"/>
+      <rect x="108" y="98" width="24" height="14"/>
+    </svg>`;
+    case "book": return `<svg viewBox="0 0 200 220" ${s}>
+      <rect x="50" y="30" width="100" height="160"/>
+      <path d="M150 30 L156 36 L156 196 L150 190"/>
+      <path d="M64 60 L136 60 M64 70 L120 70"/>
+      <path d="M75 130 L125 130"/>
+    </svg>`;
+  }
+  return "";
+}
+
+/* ─── Schematic SVG (hover overlay) ──────────────────────── */
+function schematicSvg(kind){
+  const c = 'stroke="#F0E4D2" stroke-width="0.6" fill="none"';
+  const cd = 'stroke="#F0E4D2" stroke-width="0.5" stroke-dasharray="2 3" fill="none"';
+  // Simple measurement scaffold around the silhouette shape
+  return `<svg viewBox="0 0 240 240" preserveAspectRatio="xMidYMid meet">
+    <g ${cd}>
+      <line x1="20" y1="20" x2="220" y2="20"/>
+      <line x1="20" y1="220" x2="220" y2="220"/>
+      <line x1="20" y1="20" x2="20" y2="220"/>
+      <line x1="220" y1="20" x2="220" y2="220"/>
+    </g>
+    <g ${c}>
+      <line x1="20" y1="60" x2="220" y2="60"/>
+      <line x1="20" y1="180" x2="220" y2="180"/>
+      <line x1="80" y1="20" x2="80" y2="220"/>
+      <line x1="160" y1="20" x2="160" y2="220"/>
+      <circle cx="120" cy="120" r="56"/>
+      <circle cx="120" cy="120" r="2.4" fill="#F0E4D2"/>
+      <line x1="120" y1="64" x2="120" y2="176"/>
+      <line x1="64" y1="120" x2="176" y2="120"/>
+    </g>
+    <g fill="#F0E4D2" font-family="JetBrains Mono" font-size="7" letter-spacing="0.5">
+      <text x="22" y="14">A.01</text>
+      <text x="200" y="14">A.02</text>
+      <text x="22" y="234">B.01</text>
+      <text x="200" y="234">B.02</text>
+      <text x="124" y="118">⌖</text>
+    </g>
+  </svg>`;
+}
+
+/* ─── State ──────────────────────────────────────────────── */
+let lang = "EN";
+let activeSpec = 2; // index 03 = Carrara//Steed
+
+/* ─── Build hero selector ───────────────────────────────── */
+function renderSelector(){
+  const el = document.getElementById("heroSelector");
+  el.innerHTML = SPECIMENS.map((s,i)=>`
+    <button data-i="${i}" class="${i===activeSpec?'active':''}" role="tab" aria-selected="${i===activeSpec}">
+      <span class="idx mono">${s.idx} / 06</span>
+      <span class="nm">${s.name[lang]}</span>
+    </button>
+  `).join("");
+  el.querySelectorAll("button").forEach(b=>{
+    b.addEventListener("click",()=>{
+      activeSpec = +b.dataset.i;
+      renderHero(); renderSelector();
+      const sl = document.getElementById("scanline");
+      if(sl){ sl.style.animation="none"; void sl.offsetWidth; sl.style.animation=""; }
+    });
+  });
+}
+
+/* ─── Build hero from active specimen ───────────────────── */
+function renderHero(){
+  const s = SPECIMENS[activeSpec];
+  const heroName = document.getElementById("heroName");
+  // Insert "//" between two halves of name where possible; else simple
+  const name = s.name[lang];
+  const parts = name.split(/\s|\/\/|·|\u00b7/).filter(Boolean);
+  if(parts.length>=2){
+    heroName.innerHTML = `${parts[0]}<br/><span class="slash">//</span>${parts.slice(1).join(' ')}`;
+  } else {
+    heroName.textContent = name;
+  }
+  document.getElementById("heroSub").textContent = s.sub[lang];
+  document.getElementById("heroQuote").textContent = s.quote[lang];
+
+  // spec rows — keep big numerals, code-like values universal
+  const sp = s.spec;
+  const big = (v)=> {
+    const m = v.match(/^([\d.]+)(.*)$/);
+    if(!m) return `<span>${v}</span>`;
+    return `<span class="big">${m[1]}</span>${m[2].trim()? ' '+m[2].trim() : ''}`;
+  };
+  document.getElementById("specTannage").innerHTML = big(sp.tan);
+  document.getElementById("specGrain").innerHTML = big(sp.grain);
+  document.getElementById("specOrigin").textContent = sp.origin;
+  document.getElementById("specFinish").innerHTML = big(sp.finish);
+  document.getElementById("specWeight").innerHTML = big(sp.weight);
+  document.getElementById("specEdge").textContent = sp.edge;
+  document.getElementById("specCert").textContent = sp.cert;
+
+  // hero index update
+  const eb = document.querySelector(".hero-eyebrow");
+  if(eb){
+    eb.children[0].innerHTML = `<span class="k">${I18N[lang]["hero.eyebrow.kind"]}</span> ${s.idx} / 06`;
+  }
+}
+
+/* ─── Specimens grid ─────────────────────────────────────── */
+function renderGrid(){
+  const root = document.getElementById("specimensGrid");
+  root.innerHTML = SPECIMENS.map((s,i)=>`
+    <article class="spec ${s.span}" data-i="${i}">
+      <div class="spec-head">
+        <span class="sn mono">${s.sn}</span>
+        <span class="mono">${s.idx} / 06</span>
+      </div>
+      <div class="spec-idx">${s.idx}<sub>/06</sub></div>
+      <h3 class="spec-name">${s.name[lang]}</h3>
+      <div class="spec-silhouette" aria-hidden="true">${silhouette(s.silhouette)}</div>
+      <div class="spec-meta">
+        ${s.meta.map(([k,v])=>`<div><span class="k">${I18N[lang]["spec.k."+k.toLowerCase()]||k}</span><span class="v mono">${v}</span></div>`).join("")}
+      </div>
+      <div class="schematic" aria-hidden="true">
+        <div class="head">
+          <span>SCHEMATIC · ${s.sn}</span>
+          <span>${s.idx} / 06</span>
+        </div>
+        <div class="draw">${schematicSvg(s.silhouette)}</div>
+        <div class="foot">
+          ${s.meta.map(([k,v])=>`<div><span class="k">${I18N[lang]["spec.k."+k.toLowerCase()]||k}</span>${v}</div>`).join("")}
+        </div>
+      </div>
+    </article>
+  `).join("");
+  // clicking a card sets it as active in hero
+  root.querySelectorAll(".spec").forEach(el=>{
+    el.addEventListener("click",()=>{
+      activeSpec = +el.dataset.i;
+      renderHero(); renderSelector();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      const sl = document.getElementById("scanline");
+      if(sl){ sl.style.animation="none"; void sl.offsetWidth; sl.style.animation=""; }
+    });
+  });
+}
+
+/* ─── Marquee ────────────────────────────────────────────── */
+function renderMarquee(){
+  const t = document.getElementById("marqueeTrack");
+  const tokens = MARQUEE[lang];
+  // Build the full string then duplicate so the loop seamlessly repeats
+  const seq = tokens.map(s=>`<span>${s}</span><span class="star">✦</span>`).join("");
+  t.innerHTML = seq + seq;
+}
+
+/* ─── Static text by data-k ──────────────────────────────── */
+function applyStatic(){
+  document.querySelectorAll("[data-k]").forEach(el=>{
+    const k = el.getAttribute("data-k");
+    const v = I18N[lang][k];
+    if(v != null){
+      // some keys carry HTML (the <br/> in grid title)
+      if(/<.*>/.test(v)) el.innerHTML = v;
+      else el.textContent = v;
+    }
+  });
+}
+
+/* ─── Telemetry ──────────────────────────────────────────── */
+const TEL = [
+  { k:"telemetry.vault", val:60.4, unit:"%", drift:[58,62], sub:"telemetry.vault.sub", barFrom:0, barTo:100 },
+  { k:"telemetry.queue", val:47, unit:"hides", drift:[40,68], sub:"telemetry.queue.sub", barFrom:0, barTo:84, integer:true },
+  { k:"telemetry.hours", val:142, unit:"hrs", drift:[120,180], sub:"telemetry.hours.sub", barFrom:0, barTo:240, integer:true },
+  { k:"telemetry.hands", val:11, unit:"on bench", drift:[8,16], sub:"telemetry.hands.sub", barFrom:0, barTo:24, integer:true }
+];
+function renderTelemetry(){
+  const root = document.getElementById("telemetryGrid");
+  root.innerHTML = TEL.map((t,i)=>{
+    const pct = Math.max(2, Math.min(100, ((t.val - t.barFrom) / (t.barTo - t.barFrom)) * 100));
+    const valStr = t.integer? Math.round(t.val) : t.val.toFixed(1);
+    return `<div class="tcell" data-i="${i}">
+      <div class="lbl"><span data-k="${t.k}">${I18N[lang][t.k]}</span><span class="mono">N°0${i+1}</span></div>
+      <div class="val"><span class="num">${valStr}</span><span class="unit">${t.unit}</span></div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="sub" data-k="${t.sub}">${I18N[lang][t.sub]}</div>
+    </div>`;
+  }).join("");
+}
+function tickTelemetry(){
+  TEL.forEach((t,i)=>{
+    const [lo,hi] = t.drift;
+    const range = hi-lo;
+    let next;
+    if(t.integer){
+      next = Math.max(lo, Math.min(hi, Math.round(t.val + (Math.random()*2-1) * Math.max(1, range*0.04))));
+    } else {
+      next = Math.max(lo, Math.min(hi, +(t.val + (Math.random()*2-1)*range*0.02).toFixed(1)));
+    }
+    t.val = next;
+    const cell = document.querySelector(`.tcell[data-i="${i}"]`);
+    if(!cell) return;
+    cell.querySelector(".val .num").textContent = t.integer? Math.round(t.val) : t.val.toFixed(1);
+    const pct = Math.max(2, Math.min(100, ((t.val - t.barFrom) / (t.barTo - t.barFrom)) * 100));
+    cell.querySelector(".bar i").style.width = pct + "%";
+  });
+}
+
+/* ─── Live timestamp ─────────────────────────────────────── */
+function pad(n){return String(n).padStart(2,"0");}
+function tickClock(){
+  const d = new Date();
+  // synthetic year 2099
+  const y = 2099;
+  const mo = pad(d.getMonth()+1);
+  const da = pad(d.getDate());
+  const hh = pad(d.getHours());
+  const mm = pad(d.getMinutes());
+  const ss = pad(d.getSeconds());
+  const tsEl = document.getElementById("ts");
+  if(tsEl) tsEl.textContent = `${y}.${mo}.${da} · ${hh}:${mm}:${ss} UTC`;
+  const tt = document.getElementById("telTs");
+  if(tt) tt.textContent = `${hh}:${mm}:${ss}`;
+}
+
+/* ─── Language switching ─────────────────────────────────── */
+function setLang(next){
+  lang = next;
+  document.documentElement.lang = next === "KA" ? "ka" : next === "RU" ? "ru" : "en";
+  document.querySelectorAll(".lang button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.lang === next);
+    b.setAttribute("aria-pressed", b.dataset.lang === next);
+  });
+  applyStatic();
+  renderHero();
+  renderSelector();
+  renderGrid();
+  renderMarquee();
+  renderTelemetry();
+}
+document.querySelectorAll(".lang button").forEach(b=>{
+  b.addEventListener("click",()=> setLang(b.dataset.lang));
+});
+
+/* ─── Custom cursor ──────────────────────────────────────── */
+(function cursor(){
+  if (matchMedia("(pointer: coarse)").matches) return;
+  const c = document.getElementById("cursor");
+  const t = document.getElementById("cursorTrail");
+  let x=-50,y=-50,tx=-50,ty=-50;
+  document.addEventListener("mousemove",e=>{ x=e.clientX; y=e.clientY; });
+  let raf;
+  function loop(){
+    tx += (x-tx)*0.18;
+    ty += (y-ty)*0.18;
+    c.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
+    t.style.transform = `translate3d(${tx}px, ${ty}px, 0) translate(-50%, -50%)`;
+    raf = requestAnimationFrame(loop);
+  }
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches){
+    document.addEventListener("mousemove",e=>{
+      c.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+      t.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+    });
+  } else {
+    loop();
+  }
+  document.addEventListener("mouseleave",()=>{
+    c.style.opacity = "0"; t.style.opacity = "0";
+  });
+  document.addEventListener("mouseenter",()=>{
+    c.style.opacity = "1"; t.style.opacity = "1";
+  });
+})();
+
+/* ─── Init ───────────────────────────────────────────────── */
+applyStatic();
+renderHero();
+renderSelector();
+renderGrid();
+renderMarquee();
+renderTelemetry();
+tickClock();
+setInterval(tickClock, 1000);
+setInterval(tickTelemetry, 2400);
+</script>
+
+<!-- ─── Tweaks panel (React) ───────────────────────────── -->
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "tan": "#B5895E",
+  "choc": "#3D1F0F",
+  "bone": "#F0E4D2",
+  "mid": "#8B6B4D",
+  "scriptOn": true,
+  "marqueeSpeed": 60,
+  "scanline": true,
+  "cursor": true,
+  "displayFont": "Archivo Black"
+}/*EDITMODE-END*/;
+
+const DISPLAY_FONTS = ["Archivo Black", "Anton", "Bebas Neue", "Oswald", "Bowlby One"];
+
+function App(){
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  React.useEffect(()=>{
+    const r = document.documentElement;
+    r.style.setProperty("--tan", t.tan);
+    r.style.setProperty("--choc", t.choc);
+    r.style.setProperty("--bone", t.bone);
+    r.style.setProperty("--mid", t.mid);
+    r.style.setProperty("--hair-strong", t.choc);
+  },[t.tan,t.choc,t.bone,t.mid]);
+
+  React.useEffect(()=>{
+    document.querySelectorAll(".hero-quote").forEach(el=>{
+      el.style.display = t.scriptOn ? "" : "none";
+    });
+  },[t.scriptOn]);
+
+  React.useEffect(()=>{
+    document.querySelectorAll(".marquee-track").forEach(el=>{
+      el.style.animationDuration = t.marqueeSpeed + "s";
+    });
+  },[t.marqueeSpeed]);
+
+  React.useEffect(()=>{
+    const sc = document.getElementById("scanline");
+    if(!sc) return;
+    sc.style.display = t.scanline ? "" : "none";
+  },[t.scanline]);
+
+  React.useEffect(()=>{
+    const c = document.getElementById("cursor");
+    const tr = document.getElementById("cursorTrail");
+    [c,tr].forEach(el=>{ if(el) el.style.display = t.cursor ? "" : "none"; });
+    document.body.style.cursor = t.cursor ? "none" : "auto";
+  },[t.cursor]);
+
+  React.useEffect(()=>{
+    // Load Google font dynamically when display font changes
+    const id = "tweak-display-font";
+    let link = document.getElementById(id);
+    if(!link){
+      link = document.createElement("link");
+      link.id = id; link.rel = "stylesheet";
+      document.head.appendChild(link);
+    }
+    const fam = t.displayFont.replace(/ /g,"+");
+    link.href = `https://fonts.googleapis.com/css2?family=${fam}:wght@400;700;900&display=swap`;
+    document.documentElement.style.setProperty("--display", `"${t.displayFont}", "Helvetica Neue", Arial, sans-serif`);
+  },[t.displayFont]);
+
+  return (
+    <TweaksPanel title="Tweaks · LEATHER//ART">
+      <TweakSection label="Palette" />
+      <TweakColor  label="Tan field"   value={t.tan}  onChange={(v)=>setTweak('tan', v)} />
+      <TweakColor  label="Chocolate"   value={t.choc} onChange={(v)=>setTweak('choc', v)} />
+      <TweakColor  label="Bone"        value={t.bone} onChange={(v)=>setTweak('bone', v)} />
+      <TweakColor  label="Mid brown"   value={t.mid}  onChange={(v)=>setTweak('mid', v)} />
+
+      <TweakSection label="Type & motion" />
+      <TweakSelect label="Display font" value={t.displayFont} options={DISPLAY_FONTS}
+                   onChange={(v)=>setTweak('displayFont', v)} />
+      <TweakSlider label="Marquee speed" value={t.marqueeSpeed} min={20} max={140} step={5} unit="s"
+                   onChange={(v)=>setTweak('marqueeSpeed', v)} />
+      <TweakToggle label="Editorial script" value={t.scriptOn} onChange={(v)=>setTweak('scriptOn', v)} />
+      <TweakToggle label="Hero scanline"    value={t.scanline} onChange={(v)=>setTweak('scanline', v)} />
+      <TweakToggle label="Custom cursor"    value={t.cursor}   onChange={(v)=>setTweak('cursor', v)} />
+    </TweaksPanel>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("tweaks-root")).render(<App/>);
+</script>
+</body>
+</html>
