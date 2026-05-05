@@ -28,7 +28,8 @@ const NavLinks = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 16px;
+    padding: 12px 16px;
+    min-height: 44px;
     color: var(--mid);
     transition: color 120ms ease;
     white-space: nowrap;
@@ -95,8 +96,8 @@ const Ham = styled.button`
   display: none;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   background: none;
   border: 0;
   cursor: none;
