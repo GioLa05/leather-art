@@ -44,3 +44,16 @@ Chromium only. First run requires `npx playwright install chromium`.
   routes; no overflow @390px; language switch preserves scroll position.
 - **hero-eyebrow.spec.ts** — guards bug #2 (eyebrow tannage tracks the selected
   specimen).
+
+### Phase 3 — admin panel (`tests/phase3/`)
+Runs serially (config `workers:1`); `global-setup`/`global-teardown` snapshot and
+restore the editable data files around the whole run.
+- **auth.spec.ts** — `/admin` unauth → redirect; admin API unauth → 401; wrong
+  creds rejected on-brand; correct creds (UI form) → dashboard, session persists,
+  logout works.
+- **categories.spec.ts** — deleting a category that still has specimens is
+  blocked server-side and surfaces a warning listing affected specimens.
+- **crud.spec.ts** — create a specimen in the admin → it appears on `/vault` →
+  edit it → the edit appears on `/vault` → delete → it's gone.
+- **translations.spec.ts** — add a new key (round-trips through the file) and
+  edit `nav.contact`; the edit renders on `/` via `t()`.

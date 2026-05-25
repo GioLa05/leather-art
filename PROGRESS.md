@@ -17,3 +17,13 @@
 | 2 | Health sweep: console/hydration clean on all 7 routes × 3 langs; no broken images; marquee animates; nav routes; lang toggle switches copy; vault filter/sort/category/compare/modal/prev-next/view-toggle all pass; keyboard reaches interactive elements. | done | (phase2 commit) |
 | 2 | Touch degradation (cursor hidden, mobile menu) + no overflow @390 + lang-switch preserves scroll. | done | (phase2 commit) |
 | 2 | Full suite green: **57 passed**. | done | (phase2 commit) |
+| 3 | Extract telemetry → src/data/telemetry.ts | done | (phase3 commit) |
+| 3 | ts-morph writers + serializer + Prettier (round-trip validated) | done | (phase3 commit) |
+| 3 | NextAuth credentials + middleware + per-route session guard | done | (phase3 commit) |
+| 3 | Admin UI kit, shell, toasts, unsaved guard, ⌘S | done | (phase3 commit) |
+| 3 | Panels: login, dashboard, specimens list + editor, categories, nav, translations, telemetry, media | done | (phase3 commit) |
+| 3 | **BUG** (my own admin code): `useToast()` returned a fresh object each render → load effects re-ran every render and wiped edits. Fixed by memoizing the hook. | fixed | (phase3 commit) |
+| 3 | **GOTCHA** bcrypt `$` mangled by dotenv-expand → escape as `\$`; script emits escaped line. | resolved | (phase3 commit) |
+| 3 | **GOTCHA** login cookie race → `signIn(redirect:true)`. | resolved | (phase3 commit) |
+| 3 | Playwright phase3: auth, category constraint, CRUD, translations — 7 green | done | (phase3 commit) |
+| 3 | Full suite (all phases, sequential): **64 passed**. Data files restored by teardown; build green. | done | (phase3 commit) |

@@ -12,3 +12,4 @@ out/
 /playwright-report/
 /blob-report/
 /.playwright/
+/.data-backup/
