@@ -49,10 +49,15 @@
 - [x] 3.13 Merge to feature/autonomous-build
 
 ## Final
-- [ ] F.1 Full suite green on feature/autonomous-build
-- [ ] F.2 Verify main untouched
-- [ ] F.3 REPORT.md
-- [ ] F.4 Push all branches (no PR to main)
+- [x] F.1 Full suite green on feature/autonomous-build (64 passed)
+- [x] F.2 Verify main untouched (still at 1c63909, 14 src files)
+- [x] F.3 REPORT.md
+- [x] F.4 Push all branches (no PR to main)
 
 ## Notes / Blockers
-- (none yet)
+- D0: branched off the current HEAD (split/mobile structure), not bare `main`,
+  because `main` lacks the component structure this prompt describes. `main`
+  itself is never modified. (See DECISIONS.md.)
+- KA/RU strings for all new keys are plausible, non-native translations — listed
+  in DECISIONS.md "translations to review" and REPORT.md.
+- `.env.local` is required for the admin (gitignored). Setup in REPORT.md.
