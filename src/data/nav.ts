@@ -10,7 +10,7 @@ export interface NavItem {
 export const NAV: NavItem[] = [
   { idx: '01', k: 'nav.index', href: '/', id: 'index' },
   { idx: '02', k: 'nav.vault', href: '/vault', id: 'vault' },
-  { idx: '03', k: 'nav.archive', href: '#', id: 'archive' },
-  { idx: '04', k: 'nav.journal', href: '#', id: 'journal' },
-  { idx: '05', k: 'nav.contact', href: '#', id: 'contact' },
+  { idx: '03', k: 'nav.archive', href: '/archive', id: 'archive' },
+  { idx: '04', k: 'nav.journal', href: '/journal', id: 'journal' },
+  { idx: '05', k: 'nav.contact', href: '/contact', id: 'contact' },
 ];
