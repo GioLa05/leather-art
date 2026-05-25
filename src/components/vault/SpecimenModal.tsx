@@ -2,9 +2,11 @@
 
 import React, { useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import Link from 'next/link';
 import Silhouette from '@/components/Silhouette';
 import { Lang, t } from '@/i18n/translations';
 import { VAULT_SPECIMENS, TOTAL_SPECIMENS, VaultSpecimen, GrainKind } from '@/data/specimens';
+import { specimenSlug } from '@/lib/specimen-url';
 
 function pad2(n: number) { return String(n).padStart(2, '0'); }
 function pad3(n: number) { return String(n).padStart(3, '0'); }
@@ -301,13 +303,17 @@ const ModalFoot = styled.div`
     gap: 8px;
     flex-wrap: wrap;
 
-    button {
+    button, a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 10px 16px;
       min-height: 44px;
       font-family: var(--mono);
       font-size: 11px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
+      text-decoration: none;
       cursor: none;
       border: 0.5px solid var(--hair-strong);
       background: none;
@@ -442,6 +448,9 @@ export default function SpecimenModal({
                     ? t(lang, 'modal.compare').replace('[+]', '[×]')
                     : t(lang, 'modal.compare')}
                 </button>
+                <Link href={`/vault/${specimenSlug(modalSpec)}`} data-testid="open-dossier">
+                  {t(lang, 'modal.dossier')}
+                </Link>
                 <button className="primary">{t(lang, 'modal.request')}</button>
               </div>
             </ModalFoot>

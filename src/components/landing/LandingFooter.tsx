@@ -3,7 +3,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
-import { Lang, t } from '@/i18n/translations';
+import Link from 'next/link';
+import { Lang, t, TranslationKey } from '@/i18n/translations';
 
 // ─── Styled Components ────────────────────────────────────────
 const SectionTag = styled.span`
@@ -71,6 +72,51 @@ const FooterGrid = styled.div`
   }
 `;
 
+const FooterNav = styled.nav`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border-top: 0.5px solid var(--hair-strong);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+
+  .k {
+    display: flex;
+    align-items: center;
+    padding: 14px 0;
+    margin-right: 18px;
+    color: var(--mid);
+    font-size: 10px;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    min-height: 44px;
+    color: var(--mid);
+    border-left: 0.5px solid var(--hair-strong);
+    transition: color 120ms ease;
+    text-decoration: none;
+  }
+  a:hover { color: var(--choc); }
+
+  @media (max-width: 480px) {
+    a { padding: 12px 12px; }
+    .k { width: 100%; margin-right: 0; padding-bottom: 4px; }
+  }
+`;
+
+const FOOTER_LINKS: { href: string; k: TranslationKey }[] = [
+  { href: '/about', k: 'nav.about' },
+  { href: '/vault', k: 'nav.vault' },
+  { href: '/journal', k: 'nav.journal' },
+  { href: '/archive', k: 'nav.archive' },
+  { href: '/contact', k: 'nav.contact' },
+];
+
 // ─── Props ───────────────────────────────────────────────────
 interface LandingFooterProps {
   lang: Lang;
@@ -110,6 +156,14 @@ export default function LandingFooter({ lang }: LandingFooterProps) {
           © 2099 LEATHER//ART · ALL HIDES RESERVED
         </div>
       </FooterGrid>
+      <FooterNav aria-label="Footer navigation">
+        <span className="k">{t(lang, 'footer.links')}</span>
+        {FOOTER_LINKS.map((l) => (
+          <Link key={l.href} href={l.href}>
+            {t(lang, l.k)}
+          </Link>
+        ))}
+      </FooterNav>
     </Footer>
   );
 }
