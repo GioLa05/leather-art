@@ -342,7 +342,8 @@ export default function Hero({ lang, spec, activeSpec, scanRun, onSelectSpec }: 
               <span className="k">{t(lang, 'hero.eyebrow.kind')}</span> {spec.idx} / 06
             </span>
             <span>
-              <span className="k">{t(lang, 'hero.eyebrow.tan')}</span> VEG · 28D
+              <span className="k">{t(lang, 'hero.eyebrow.tan')}</span>{' '}
+              {spec.meta.find((m) => m[0] === 'TAN')?.[1] ?? spec.spec.tan}
             </span>
             <span>
               <span className="k">{t(lang, 'hero.eyebrow.year')}</span> MMXCIX

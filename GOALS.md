@@ -23,12 +23,15 @@
 - [x] 1.8 Link crawler spec (Nav + footer → 200 + h1)
 - [x] 1.9 Merge to feature/autonomous-build
 
-## Phase 2 — Bug Sweep  [status: pending]
-- [ ] 2.1 Reproduce + fix cursor-loss bug
-- [ ] 2.2 General health Playwright suite
-- [ ] 2.3 Fix every failure / console error
-- [ ] 2.4 Responsive + touch + lang-switch checks
-- [ ] 2.5 Merge to feature/autonomous-build
+## Phase 2 — Bug Sweep  [status: done]
+- [x] 2.1 Reproduce + fix cursor-loss bug (root cause: opacity desync; fixed by
+      reasserting visibility on mousemove. cursor.spec.ts)
+- [x] 2.2 General health Playwright suite (marquee, nav routing, lang toggle,
+      images, console/hydration, vault interactions, keyboard)
+- [x] 2.3 Fix every failure / console error — found 2 bugs (cursor, hero eyebrow);
+      console clean across all routes/langs (logged in PROGRESS.md)
+- [x] 2.4 Responsive 1100/820/480 + touch degradation + lang-switch scroll checks
+- [x] 2.5 Merge to feature/autonomous-build
 
 ## Phase 3 — Admin Panel  [status: pending]
 - [ ] 3.1 /admin/login

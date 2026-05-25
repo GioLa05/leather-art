@@ -55,7 +55,29 @@ leaves the browser. Documented per Phase 1 step 1.3.
 three placeholder Nav hrefs (`#`) are repointed to their real routes.
 
 ## Phase 2 — Bug Sweep
-(pending)
+
+**Bug #1 — custom cursor stuck hidden (the seed bug).** Root cause in
+`Cursor.tsx`: opacity was driven only by `document` `mouseenter`/`mouseleave`.
+A `mouseleave` (leaving the window, opening a native `<select>`, devtools)
+set opacity 0, and nothing restored it on subsequent in-page movement — only a
+matching `mouseenter` would, which often never fired. Fix: reassert
+`opacity = 1` on every `mousemove`, since the cursor tracks the pointer and any
+in-page movement means it must be visible. No `setTimeout` band-aid. Window
+exit still hides it (until the next move). Added `data-testid` to the cursor
+elements for observability.
+
+**Bug #2 — hero eyebrow tannage hardcoded.** `Hero.tsx` always printed
+`VEG · 28D` in the eyebrow regardless of the selected specimen. Fixed to read
+the active specimen's `TAN` meta value (the spec sheet beside it was already
+dynamic, so this was a genuine inconsistency, not a style choice).
+
+**No other defects found.** Console/hydration were clean on every route in all
+three languages; images load; marquee animates; all vault interactions work.
+
+**Observed but intentionally not changed:** `SpecimenModal`'s keydown
+`useEffect` has no dependency array (re-binds each render). Functionally
+correct, just slightly wasteful; left alone per ground rule 7 (no unrelated
+refactors).
 
 ## Phase 3 — Admin Panel
 (pending)

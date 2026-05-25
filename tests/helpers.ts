@@ -22,3 +22,27 @@ export async function internalNavLinks(page: Page): Promise<string[]> {
 export async function expectH1(page: Page) {
   await expect(page.locator('h1').first()).toBeVisible();
 }
+
+/**
+ * Attach console + page-error collectors. Returns an `errors` array that
+ * accumulates console.error messages and uncaught exceptions (including React
+ * hydration warnings, which surface as console errors).
+ */
+export function collectErrors(page: Page): string[] {
+  const errors: string[] = [];
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') errors.push(msg.text());
+  });
+  page.on('pageerror', (err) => errors.push(`pageerror: ${err.message}`));
+  return errors;
+}
+
+/** Errors we tolerate: dev-server network noise unrelated to app behavior. */
+export function appErrors(errors: string[]): string[] {
+  return errors.filter(
+    (e) =>
+      !/favicon/i.test(e) &&
+      !/Failed to load resource/i.test(e) &&
+      !/the server responded with a status of 404/i.test(e)
+  );
+}
