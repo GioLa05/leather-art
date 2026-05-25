@@ -86,6 +86,12 @@ export default function Cursor() {
     const onMouseMove = (e: MouseEvent) => {
       x = e.clientX;
       y = e.clientY;
+      // Reassert visibility on every move. The cursor tracks the pointer, so if
+      // the pointer is moving inside the page the cursor must be shown. Relying
+      // only on `mouseenter` to restore opacity let a stray `mouseleave` (window
+      // exit, native <select>, devtools) leave the cursor stuck hidden.
+      cursor.style.opacity = '1';
+      trail.style.opacity = '1';
       if (reducedMotion) {
         cursor.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
         trail.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
@@ -128,8 +134,8 @@ export default function Cursor() {
   return (
     <>
       <CursorGlobal />
-      <CursorTrail ref={trailRef} aria-hidden="true" />
-      <CursorEl ref={cursorRef} aria-hidden="true" />
+      <CursorTrail ref={trailRef} aria-hidden="true" data-testid="cursor-trail" />
+      <CursorEl ref={cursorRef} aria-hidden="true" data-testid="cursor" />
     </>
   );
 }

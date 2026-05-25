@@ -375,7 +375,7 @@ export default function SpecimenModal({
   return (
     <ModalBackdrop $open={modalId != null} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       {modalSpec && (
-        <Modal onClick={e => e.stopPropagation()}>
+        <Modal onClick={e => e.stopPropagation()} data-testid="specimen-modal" role="dialog" aria-modal="true">
           <ModalLeft>
             <ModalTopBar>
               <span>SPECIMEN {pad2(modalSpec.i)} / {pad3(TOTAL_SPECIMENS)}</span>

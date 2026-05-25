@@ -160,7 +160,7 @@ interface CompareDrawerProps {
 // ─── Component ───────────────────────────────────────────────
 export default function CompareDrawer({ lang, selected, onToggleSelect, onClear }: CompareDrawerProps) {
   return (
-    <Drawer $open={selected.length > 0}>
+    <Drawer $open={selected.length > 0} data-testid="compare-drawer">
       <DrawerHeader>
         <span className="title">{t(lang, 'drawer.title')}</span>
         <span>{t(lang, 'drawer.slot')} {selected.length} / 3</span>
