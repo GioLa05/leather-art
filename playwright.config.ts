@@ -6,10 +6,15 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
-  fullyParallel: true,
+  // The admin (Phase 3) tests mutate the on-disk data files and rely on dev HMR
+  // recompiling. Run serially with a single worker so phases never interleave
+  // and reads never observe a half-written file. Determinism > speed here.
+  fullyParallel: false,
+  workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  globalSetup: './tests/global-setup.ts',
+  globalTeardown: './tests/global-teardown.ts',
   reporter: [['list']],
   use: {
     baseURL: 'http://localhost:3000',

@@ -37,6 +37,25 @@ export function collectErrors(page: Page): string[] {
   return errors;
 }
 
+/**
+ * Establish an admin session programmatically (NextAuth credentials flow via the
+ * shared context cookie jar). Reliable across cold dev-server compiles — the UI
+ * login form is exercised separately in auth.spec.
+ */
+export async function adminLogin(page: Page) {
+  const csrf = await (await page.request.get('/api/auth/csrf')).json();
+  await page.request.post('/api/auth/callback/credentials', {
+    form: {
+      csrfToken: csrf.csrfToken,
+      username: 'operator',
+      password: 'specimen2099',
+      json: 'true',
+    },
+  });
+  await page.goto('/admin');
+  await page.waitForURL(/\/admin$/, { timeout: 30_000 });
+}
+
 /** Errors we tolerate: dev-server network noise unrelated to app behavior. */
 export function appErrors(errors: string[]): string[] {
   return errors.filter(

@@ -33,20 +33,20 @@
 - [x] 2.4 Responsive 1100/820/480 + touch degradation + lang-switch scroll checks
 - [x] 2.5 Merge to feature/autonomous-build
 
-## Phase 3 — Admin Panel  [status: pending]
-- [ ] 3.1 /admin/login
-- [ ] 3.2 /admin dashboard
-- [ ] 3.3 /admin/specimens list
-- [ ] 3.4 /admin/specimens/[serial] editor
-- [ ] 3.5 /admin/categories
-- [ ] 3.6 /admin/nav
-- [ ] 3.7 /admin/translations
-- [ ] 3.8 /admin/telemetry (extract src/data/telemetry.ts)
-- [ ] 3.9 /admin/media
-- [ ] 3.10 Auth (NextAuth credentials) + middleware + API guards
-- [ ] 3.11 ts-morph writers + Prettier
-- [ ] 3.12 Playwright (login, middleware, CRUD, translation, category constraint)
-- [ ] 3.13 Merge to feature/autonomous-build
+## Phase 3 — Admin Panel  [status: done]
+- [x] 3.1 /admin/login (branded, "TRANSMISSION REJECTED" error)
+- [x] 3.2 /admin dashboard (totals, per-category, cycle, last-edited, links)
+- [x] 3.3 /admin/specimens list (vault+landing, new/dup/delete/reorder/move)
+- [x] 3.4 /admin/specimens/[serial] editor (vault + landing, trilingual tabs, live preview, ⌘S, unsaved guard)
+- [x] 3.5 /admin/categories (add/rename/reorder/delete + non-empty constraint)
+- [x] 3.6 /admin/nav
+- [x] 3.7 /admin/translations (dictionary + search + add/delete + marquee editor)
+- [x] 3.8 /admin/telemetry (extracted src/data/telemetry.ts)
+- [x] 3.9 /admin/media (list/upload/delete)
+- [x] 3.10 Auth (NextAuth credentials) + middleware + API guards (re-checked server-side)
+- [x] 3.11 ts-morph writers + Prettier (round-trip validated)
+- [x] 3.12 Playwright (login, middleware/401, CRUD, translation, category constraint) — 7 green
+- [x] 3.13 Merge to feature/autonomous-build
 
 ## Final
 - [ ] F.1 Full suite green on feature/autonomous-build

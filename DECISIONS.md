@@ -80,4 +80,52 @@ correct, just slightly wasteful; left alone per ground rule 7 (no unrelated
 refactors).
 
 ## Phase 3 — Admin Panel
-(pending)
+
+**Persistence:** file-based via ts-morph + Prettier (`src/lib/admin/writers.ts`).
+Each writer locates the exported declaration and replaces its initializer with a
+serialized literal (`src/lib/admin/serialize.ts`), then Prettier-formats the
+whole file. Translations also regenerate the `TranslationKey` union from the EN
+keys so the file stays type-safe. No regex editing. GET/PUT API routes under
+`src/app/api/admin/*` read the live module and write back.
+
+**Auth:** NextAuth v4, Credentials provider, JWT sessions. `src/middleware.ts`
+protects `/admin/*` (redirect to `/admin/login`) and `/api/admin/*` (401); every
+API handler **also** re-checks the session (`requireAdmin`). Creds in
+`.env.local` (`ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH`, `NEXTAUTH_SECRET`).
+
+**D3 — bcrypt hash must be `$`-escaped in .env.local.** Next's dotenv-expand
+interprets `$2b$10$…` as variable interpolation and blanks the hash (even inside
+single quotes). The fix is to escape each `$` as `\$`. `scripts/hash-password.ts`
+now emits a ready-to-paste, escaped `ADMIN_PASSWORD_HASH=` line.
+
+**D4 — login uses `signIn(redirect:true)`.** `redirect:false` + client navigation
+raced the session-cookie commit and bounced back to login. With `redirect:true`
+NextAuth sets the cookie and redirects in one server response; failures come back
+as `?error=CredentialsSignin`, shown as the on-brand "TRANSMISSION REJECTED".
+
+**D5 — rejected-login copy:** "TRANSMISSION REJECTED · CHECK CREDENTIALS".
+
+**D6 — admin UI is English-only** (per the prompt) — keeps scope sane; the public
+site stays trilingual.
+
+**D7 — telemetry extraction:** the hardcoded `TEL_INIT` moved from
+`Telemetry.tsx` to `src/data/telemetry.ts` (`TELEMETRY`) so `/admin/telemetry`
+can edit it. This is the one sanctioned "refactor while here".
+
+**D8 — test data safety:** Playwright runs serially (`workers:1`,
+`fullyParallel:false`) so phases never interleave on the shared data files; a
+`globalSetup`/`globalTeardown` snapshots and restores `src/data/*` +
+`translations.ts` around the whole run. The CRUD test also self-restores
+(create→delete). Phases sort so mutation specs (phase3) run after read-only ones.
+
+**D9 — translation render test:** "add a key, use it via t()" is verified two
+ways: a brand-new key round-trips through the file (API GET reflects it) **and**
+an existing rendered key (`nav.contact`) is edited and shown changing on `/` —
+proving `t()` picks up the file write. A page can't call `t()` on an arbitrary
+runtime key without code, so editing a live key is the faithful render proof.
+
+**Bug found + fixed in my own admin code:** `useToast()` returned a fresh object
+each render; placed in load-effect deps it re-ran the fetch every render and
+clobbered in-progress edits. Fixed by memoizing the hook's return
+(`useMemo`/stable `push`). Also: new specimens get an in-range `entry` date so
+they're visible under the vault's default date filter.
