@@ -27,3 +27,15 @@
 | 3 | **GOTCHA** login cookie race → `signIn(redirect:true)`. | resolved | (phase3 commit) |
 | 3 | Playwright phase3: auth, category constraint, CRUD, translations — 7 green | done | (phase3 commit) |
 | 3 | Full suite (all phases, sequential): **64 passed**. Data files restored by teardown; build green. | done | (phase3 commit) |
+| 4 | **BUG #7 (user)** language reset to EN on every navigation — per-page `useState<Lang>('EN')`. Fixed with app-wide `LangProvider` (localStorage-persisted) mounted in the root layout; default is now **KA**. | fixed | (phase4 commit) |
+| 4 | **BUG #2 (user)** currency: ₾ (`priceGel`) for KA, $ (`price`) for EN/RU via `formatPrice`; both prices per specimen, editable in admin. Removed all hardcoded `€`. | fixed | (phase4 commit) |
+| 4 | **BUG #1a (user)** no Georgian for products — vault `name/quote/finish/editorial` now `Record<Lang,string>` with KA/RU content for all 16 specimens; admin vault editor gained EN/KA/RU tabs. | fixed | (phase4 commit) |
+| 4 | **BUG #1b (user)** photos: `image?` on vault+landing specimens, admin ImagePicker (upload/library/remove via existing media API), cover-fit render with silhouette fallback on all public surfaces + admin previews. Upload→attach→save→render verified end-to-end. | fixed | (phase4 commit) |
+| 4 | **BUG #3 (user)** cursor invisible on dark areas — white crosshair/trail + `mix-blend-mode: difference` (auto-inverts against any backdrop). | fixed | (phase4 commit) |
+| 4 | **BUG #4 (user)** `--mid` `#8B6B4D` → `#5E432B` (globals.css + theme.ts). | fixed | (phase4 commit) |
+| 4 | **BUG #6 (user)** mobile filter drawer → bottom sheet (backdrop, grabber, sticky ✕ header, sticky localized apply button, body-scroll lock). | fixed | (phase4 commit) |
+| 4 | **BUG #5 (user)** mobile pass: dossier table refit ≤600px (no clipped price column); 0px horizontal overflow on all 7 public routes @375. | fixed | (phase4 commit) |
+| 4 | **BUG** (found in audit) leaked E2E specimen `LA·017·2099` committed in `specimens.ts` — broke the suite's 16-specimen invariants. Removed. | fixed | (phase4 commit) |
+| 4 | Tests: EN seeded via config `storageState` for legacy suites; new `phase4/i18n.spec.ts` (KA default, persistence across nav+reload, ₾/$ by language, bottom sheet); hydration-aware poll in translations spec. | done | (phase4 commit) |
+| 4 | Docs: `docs/pages/*.md` — one file per page (7 public + 9 admin + index). | done | (phase4 commit) |
+| 4 | Full suite green: **68 passed**. `tsc` clean; production build green. | done | (phase4 commit) |
