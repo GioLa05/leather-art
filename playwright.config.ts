@@ -19,6 +19,19 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
+    // The site defaults to Georgian (KA). Legacy suites assert English UI
+    // strings, so seed the persisted language to EN for every test context.
+    // The phase4 i18n suite overrides this with an empty state to exercise
+    // the real KA default.
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: 'http://localhost:3000',
+          localStorage: [{ name: 'leather-art.lang', value: 'EN' }],
+        },
+      ],
+    },
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

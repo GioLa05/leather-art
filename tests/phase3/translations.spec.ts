@@ -42,14 +42,22 @@ test.describe('Phase 3 — translation editor', () => {
     const json = await res.json();
     expect(json.i18n.EN['nav.contact']).toBe('PARLEY');
 
-    // The edited key renders on the public site via t() after HMR.
+    // The edited key renders on the public site via t() after HMR. The site
+    // server-renders the KA default; the seeded EN language is applied by a
+    // client effect after hydration, so give each attempt time to hydrate
+    // instead of checking visibility synchronously at load.
     await expect
       .poll(
         async () => {
           await page.goto('/');
-          return page.getByRole('link', { name: /PARLEY/ }).first().isVisible().catch(() => false);
+          return page
+            .getByRole('link', { name: /PARLEY/ })
+            .first()
+            .waitFor({ state: 'visible', timeout: 5000 })
+            .then(() => true)
+            .catch(() => false);
         },
-        { timeout: 20_000 },
+        { timeout: 30_000 },
       )
       .toBe(true);
   });

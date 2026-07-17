@@ -12,6 +12,11 @@ function pad3(n: number) { return String(n).padStart(3, '0'); }
 const SORTS = ['idx', 'tan', 'grain', 'entry', 'weight'];
 
 // ─── Styled Components ────────────────────────────────────────
+/**
+ * Desktop: sticky right rail. Mobile (≤820px): a bottom sheet — slides up from
+ * the bottom edge with a dimmed backdrop, sticky close header, and an apply
+ * button. Replaces the old full-height side drawer.
+ */
 export const RightRail = styled.aside<{ $mobileOpen: boolean }>`
   border-left: 0.5px solid var(--hair-strong);
   position: sticky;
@@ -21,22 +26,87 @@ export const RightRail = styled.aside<{ $mobileOpen: boolean }>`
 
   @media (max-width: 820px) {
     position: fixed;
-    inset: 0;
-    z-index: 200;
-    height: 100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    z-index: 210;
+    height: auto;
+    max-height: 78dvh;
     background: var(--tan);
     border-left: 0;
-    transform: ${({ $mobileOpen }) => ($mobileOpen ? 'translateX(0)' : 'translateX(100%)')};
-    transition: transform 280ms ease;
+    border-top: 0.5px solid var(--hair-strong);
+    transform: ${({ $mobileOpen }) => ($mobileOpen ? 'translateY(0)' : 'translateY(100%)')};
+    transition: transform 260ms ease;
     overflow-y: auto;
-    width: 90vw;
-    max-width: 360px;
-    right: 0; left: auto;
+    overscroll-behavior: contain;
+    box-shadow: 0 -12px 40px rgba(61, 31, 15, 0.35);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
+
+export const SheetBackdrop = styled.div<{ $open: boolean }>`
+  display: none;
+
+  @media (max-width: 820px) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 205;
+    background: rgba(61, 31, 15, 0.5);
+    opacity: ${({ $open }) => ($open ? 1 : 0)};
+    pointer-events: ${({ $open }) => ($open ? 'auto' : 'none')};
+    transition: opacity 200ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
+
+const SheetGrabber = styled.div`
+  display: none;
+
+  @media (max-width: 820px) {
+    display: block;
+    width: 44px;
+    height: 3px;
+    background: var(--hair-strong);
+    margin: 10px auto 0;
+  }
+`;
+
+const SheetApply = styled.button`
+  display: none;
+
+  @media (max-width: 820px) {
+    display: block;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    padding: 16px 18px;
+    min-height: 54px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bone);
+    background: var(--choc);
+    border: 0;
+    cursor: pointer;
   }
 `;
 
 const FilterRail = styled.div`
   padding: 18px 0 80px;
+
+  @media (max-width: 820px) {
+    padding: 8px 0 0;
+  }
 `;
 
 const FilterSection = styled.div`
@@ -248,11 +318,16 @@ export const RailClose = styled.button`
   color: var(--choc);
   border-bottom: 0.5px solid var(--hair-strong);
   text-align: left;
-  background: none;
+  background: var(--tan);
   border-left: 0; border-right: 0; border-top: 0;
   cursor: pointer;
 
-  @media (max-width: 820px) { display: block; }
+  @media (max-width: 820px) {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
 `;
 
 // ─── Props ───────────────────────────────────────────────────
@@ -266,6 +341,14 @@ interface FilterPanelProps {
 
 // ─── Component ───────────────────────────────────────────────
 export default function FilterPanel({ lang, filters, onFiltersChange, mobileOpen, onClose }: FilterPanelProps) {
+  // Lock page scroll behind the mobile bottom sheet.
+  React.useEffect(() => {
+    if (!mobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [mobileOpen]);
+
   const tanMin = 48, tanMax = 240;
   const tanLeftPct = ((filters.tanLo - tanMin) / (tanMax - tanMin)) * 100;
   const tanRightPct = 100 - ((filters.tanHi - tanMin) / (tanMax - tanMin)) * 100;
@@ -278,9 +361,12 @@ export default function FilterPanel({ lang, filters, onFiltersChange, mobileOpen
   }
 
   return (
-    <RightRail $mobileOpen={mobileOpen}>
-      <RailClose onClick={onClose}>✕ {t(lang, 'filters.title')}</RailClose>
-      <FilterRail>
+    <>
+      <SheetBackdrop $open={mobileOpen} onClick={onClose} aria-hidden="true" />
+      <RightRail $mobileOpen={mobileOpen} data-testid="filter-sheet">
+        <SheetGrabber aria-hidden="true" />
+        <RailClose onClick={onClose}>✕ {t(lang, 'filters.title')}</RailClose>
+        <FilterRail>
         {/* Tannage range */}
         <FilterSection>
           <h4>{t(lang, 'filter.tan')}</h4>
@@ -369,7 +455,9 @@ export default function FilterPanel({ lang, filters, onFiltersChange, mobileOpen
             ))}
           </SortList>
         </FilterSection>
-      </FilterRail>
-    </RightRail>
+        </FilterRail>
+        <SheetApply onClick={onClose}>{t(lang, 'filters.apply')}</SheetApply>
+      </RightRail>
+    </>
   );
 }

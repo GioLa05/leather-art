@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import StyledComponentsRegistry from '@/lib/registry';
+import { LangProvider } from '@/i18n/LangContext';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="ka">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -20,7 +21,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
       </head>
       <body>
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+        <StyledComponentsRegistry>
+          <LangProvider>{children}</LangProvider>
+        </StyledComponentsRegistry>
       </body>
     </html>
   );

@@ -116,11 +116,14 @@ function ArchiveBody(lang: Lang) {
             {ARCHIVED.map((s) => (
               <Card key={s.i} href={`/vault/${specimenSlug(s)}`}>
                 <div className="frame">
-                  <Silhouette kind={s.sil} />
+                  {s.image
+                    // eslint-disable-next-line @next/next/no-img-element
+                    ? <img src={s.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : <Silhouette kind={s.sil} />}
                 </div>
                 <div>
                   <span className="sn mono">{s.sn}</span>
-                  <h2>{s.name}</h2>
+                  <h2>{s.name[lang]}</h2>
                   <span className="redacted">{t(lang, 'archive.redacted')}</span>
                   <div className="coord" style={{ marginTop: 8 }}>⌖ {s.coord}</div>
                 </div>

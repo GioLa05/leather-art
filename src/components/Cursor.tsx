@@ -22,12 +22,15 @@ const CursorEl = styled.div`
   width: 14px;
   height: 14px;
   transform: translate3d(-50%, -50%, 0);
+  /* White + difference-blend inverts against whatever is underneath, so the
+     crosshair stays visible over both dark (choc) and light (bone/tan) areas. */
+  mix-blend-mode: difference;
 
   &::before,
   &::after {
     content: '';
     position: absolute;
-    background: var(--choc);
+    background: #fff;
   }
   &::before {
     left: 50%;
@@ -58,7 +61,8 @@ const CursorTrail = styled.div`
   will-change: transform;
   width: 22px;
   height: 22px;
-  border: 0.5px solid var(--choc);
+  border: 0.5px solid #fff;
+  mix-blend-mode: difference;
   transform: translate3d(-50%, -50%, 0);
   transition: transform 90ms linear;
 

@@ -179,10 +179,18 @@ const SpecSilhouette = styled.div`
     height: 100%;
     max-height: 180px;
   }
+  img {
+    width: 100%;
+    height: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border: 0.5px solid var(--hair-strong);
+  }
 
   @media (max-width: 480px) {
     min-height: 60px;
     svg { max-height: 100px; }
+    img { max-height: 100px; }
   }
 `;
 
@@ -315,7 +323,10 @@ export default function SpecimenGrid({ lang, activeSpec, onSelectSpec }: Specime
             </SpecIdx>
             <SpecName>{s.name[lang]}</SpecName>
             <SpecSilhouette aria-hidden="true">
-              <Silhouette kind={s.silhouette} />
+              {s.image
+                // eslint-disable-next-line @next/next/no-img-element
+                ? <img src={s.image} alt="" />
+                : <Silhouette kind={s.silhouette} />}
             </SpecSilhouette>
             <SpecMeta>
               {s.meta.map(([k, v]) => (

@@ -360,7 +360,10 @@ export default function Hero({ lang, spec, activeSpec, scanRun, onSelectSpec }: 
           <span className="index mono">IDX. {spec.idx} / 06 · ARC.LA-Δ</span>
           <span className="stamp mono">⌖ 41.7151°N · 44.8271°E</span>
           <Scanline $run={scanRun} />
-          <Silhouette kind={spec.silhouette} />
+          {spec.image
+            // eslint-disable-next-line @next/next/no-img-element
+            ? <img src={spec.image} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+            : <Silhouette kind={spec.silhouette} />}
         </HeroImage>
 
         <VRule className="vrule" />

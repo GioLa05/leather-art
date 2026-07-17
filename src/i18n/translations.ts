@@ -1,57 +1,183 @@
 export type Lang = 'EN' | 'KA' | 'RU';
 
 export type TranslationKey =
-  | 'status.archive' | 'status.coords' | 'status.batch' | 'status.live'
-  | 'bc.vault' | 'bc.sector' | 'bc.index'
+  | 'status.archive'
+  | 'status.coords'
+  | 'status.batch'
+  | 'status.live'
+  | 'bc.vault'
+  | 'bc.sector'
+  | 'bc.index'
   | 'title.sub'
-  | 'counter.specs' | 'counter.vault' | 'counter.sel'
-  | 'results.showing' | 'results.specs'
-  | 'view.dossier' | 'view.specimen'
-  | 'filter.tan' | 'filter.grain' | 'filter.origin' | 'filter.weight' | 'filter.entry' | 'filter.sort'
+  | 'counter.specs'
+  | 'counter.vault'
+  | 'counter.sel'
+  | 'results.showing'
+  | 'results.specs'
+  | 'view.dossier'
+  | 'view.specimen'
+  | 'filter.tan'
+  | 'filter.grain'
+  | 'filter.origin'
+  | 'filter.weight'
+  | 'filter.entry'
+  | 'filter.sort'
   | 'filters.title'
-  | 'drawer.title' | 'drawer.slot' | 'drawer.clear' | 'drawer.view' | 'drawer.empty'
-  | 'modal.prev' | 'modal.next' | 'modal.request' | 'modal.compare'
-  | 'modal.bc.vault' | 'modal.bc.all'
-  | 'footer.k.house' | 'footer.k.cycle' | 'footer.k.coords' | 'footer.k.copy'
-  | 'th.idx' | 'th.name' | 'th.img' | 'th.tan' | 'th.grain' | 'th.origin' | 'th.weight' | 'th.coord' | 'th.price'
-  | 'cat.bags' | 'cat.belts' | 'cat.wallets' | 'cat.jackets' | 'cat.smallgoods' | 'cat.archive'
-  | 'grain.fine' | 'grain.medium' | 'grain.coarse' | 'grain.raw' | 'grain.mixed'
-  | 'sort.tan' | 'sort.grain' | 'sort.entry' | 'sort.weight' | 'sort.idx'
-  | 'empty.big' | 'empty.sub' | 'calibrating'
-  | 'origin.tuscany' | 'origin.andalusia' | 'origin.morocco' | 'origin.kyoto' | 'origin.archive_unknown'
-  | 'nav.index' | 'nav.vault' | 'nav.archive' | 'nav.journal' | 'nav.contact' | 'nav.cart'
-  | 'ms.tannage' | 'ms.hours' | 'ms.grain' | 'ms.origin' | 'ms.weight' | 'ms.coord' | 'ms.batch' | 'ms.finish' | 'ms.entry'
-  // Landing page keys
-  | 'tag.specimen' | 'tag.archive' | 'tag.telemetry' | 'tag.colophon'
-  | 'hero.eyebrow.kind' | 'hero.eyebrow.tan' | 'hero.eyebrow.year'
-  | 'hero.spec.title' | 'hero.spec.tannage' | 'hero.spec.grain' | 'hero.spec.origin'
-  | 'hero.spec.finish' | 'hero.spec.weight' | 'hero.spec.edge' | 'hero.spec.cert'
-  | 'grid.title' | 'grid.meta1' | 'grid.meta2'
-  | 'telemetry.title' | 'telemetry.synced' | 'telemetry.vault' | 'telemetry.queue'
-  | 'telemetry.hours' | 'telemetry.hands'
-  | 'telemetry.vault.sub' | 'telemetry.queue.sub' | 'telemetry.hours.sub' | 'telemetry.hands.sub'
-  | 'spec.k.tan' | 'spec.k.grm' | 'spec.k.org'
-  // Footer / nav additions
-  | 'nav.about' | 'footer.links'
-  // About page
-  | 'about.tag' | 'about.title' | 'about.lede' | 'about.body1' | 'about.body2'
-  | 'about.stats' | 'about.stat.founded' | 'about.stat.founded.sub'
-  | 'about.stat.hides' | 'about.stat.hides.sub' | 'about.stat.editions' | 'about.stat.editions.sub'
-  | 'about.stat.artisans' | 'about.stat.artisans.sub'
-  | 'about.principles' | 'about.p1.k' | 'about.p1.v' | 'about.p2.k' | 'about.p2.v' | 'about.p3.k' | 'about.p3.v'
-  // Journal page
-  | 'journal.tag' | 'journal.title' | 'journal.sub' | 'journal.read' | 'journal.field'
-  // Archive page
-  | 'archive.tag' | 'archive.title' | 'archive.sub' | 'archive.redacted' | 'archive.count' | 'archive.empty'
-  // Contact page
-  | 'contact.tag' | 'contact.title' | 'contact.sub'
-  | 'contact.k.coords' | 'contact.k.hours' | 'contact.k.response' | 'contact.k.channel'
-  | 'contact.v.hours' | 'contact.v.response'
-  | 'contact.form.title' | 'contact.form.name' | 'contact.form.email' | 'contact.form.message'
-  | 'contact.form.send' | 'contact.form.queued' | 'contact.form.queued.sub' | 'contact.form.reset' | 'contact.form.direct'
-  // Specimen detail page
-  | 'detail.back' | 'detail.prev' | 'detail.next' | 'detail.dossier' | 'detail.editorial'
-  | 'detail.notfound' | 'detail.notfound.sub' | 'detail.spec'
+  | 'filters.apply'
+  | 'drawer.title'
+  | 'drawer.slot'
+  | 'drawer.clear'
+  | 'drawer.view'
+  | 'drawer.empty'
+  | 'modal.prev'
+  | 'modal.next'
+  | 'modal.request'
+  | 'modal.compare'
+  | 'modal.bc.vault'
+  | 'modal.bc.all'
+  | 'footer.k.house'
+  | 'footer.k.cycle'
+  | 'footer.k.coords'
+  | 'footer.k.copy'
+  | 'th.idx'
+  | 'th.name'
+  | 'th.img'
+  | 'th.tan'
+  | 'th.grain'
+  | 'th.origin'
+  | 'th.weight'
+  | 'th.coord'
+  | 'th.price'
+  | 'cat.bags'
+  | 'cat.belts'
+  | 'cat.wallets'
+  | 'cat.jackets'
+  | 'cat.smallgoods'
+  | 'cat.archive'
+  | 'grain.fine'
+  | 'grain.medium'
+  | 'grain.coarse'
+  | 'grain.raw'
+  | 'grain.mixed'
+  | 'sort.tan'
+  | 'sort.grain'
+  | 'sort.entry'
+  | 'sort.weight'
+  | 'sort.idx'
+  | 'empty.big'
+  | 'empty.sub'
+  | 'calibrating'
+  | 'origin.tuscany'
+  | 'origin.andalusia'
+  | 'origin.morocco'
+  | 'origin.kyoto'
+  | 'origin.archive_unknown'
+  | 'nav.index'
+  | 'nav.vault'
+  | 'nav.archive'
+  | 'nav.journal'
+  | 'nav.contact'
+  | 'nav.cart'
+  | 'ms.tannage'
+  | 'ms.hours'
+  | 'ms.grain'
+  | 'ms.origin'
+  | 'ms.weight'
+  | 'ms.coord'
+  | 'ms.batch'
+  | 'ms.finish'
+  | 'ms.entry'
+  | 'tag.specimen'
+  | 'tag.archive'
+  | 'tag.telemetry'
+  | 'tag.colophon'
+  | 'hero.eyebrow.kind'
+  | 'hero.eyebrow.tan'
+  | 'hero.eyebrow.year'
+  | 'hero.spec.title'
+  | 'hero.spec.tannage'
+  | 'hero.spec.grain'
+  | 'hero.spec.origin'
+  | 'hero.spec.finish'
+  | 'hero.spec.weight'
+  | 'hero.spec.edge'
+  | 'hero.spec.cert'
+  | 'grid.title'
+  | 'grid.meta1'
+  | 'grid.meta2'
+  | 'telemetry.title'
+  | 'telemetry.synced'
+  | 'telemetry.vault'
+  | 'telemetry.queue'
+  | 'telemetry.hours'
+  | 'telemetry.hands'
+  | 'telemetry.vault.sub'
+  | 'telemetry.queue.sub'
+  | 'telemetry.hours.sub'
+  | 'telemetry.hands.sub'
+  | 'spec.k.tan'
+  | 'spec.k.grm'
+  | 'spec.k.org'
+  | 'nav.about'
+  | 'footer.links'
+  | 'about.tag'
+  | 'about.title'
+  | 'about.lede'
+  | 'about.body1'
+  | 'about.body2'
+  | 'about.stats'
+  | 'about.stat.founded'
+  | 'about.stat.founded.sub'
+  | 'about.stat.hides'
+  | 'about.stat.hides.sub'
+  | 'about.stat.editions'
+  | 'about.stat.editions.sub'
+  | 'about.stat.artisans'
+  | 'about.stat.artisans.sub'
+  | 'about.principles'
+  | 'about.p1.k'
+  | 'about.p1.v'
+  | 'about.p2.k'
+  | 'about.p2.v'
+  | 'about.p3.k'
+  | 'about.p3.v'
+  | 'journal.tag'
+  | 'journal.title'
+  | 'journal.sub'
+  | 'journal.read'
+  | 'journal.field'
+  | 'archive.tag'
+  | 'archive.title'
+  | 'archive.sub'
+  | 'archive.redacted'
+  | 'archive.count'
+  | 'archive.empty'
+  | 'contact.tag'
+  | 'contact.title'
+  | 'contact.sub'
+  | 'contact.k.coords'
+  | 'contact.k.hours'
+  | 'contact.k.response'
+  | 'contact.k.channel'
+  | 'contact.v.hours'
+  | 'contact.v.response'
+  | 'contact.form.title'
+  | 'contact.form.name'
+  | 'contact.form.email'
+  | 'contact.form.message'
+  | 'contact.form.send'
+  | 'contact.form.queued'
+  | 'contact.form.queued.sub'
+  | 'contact.form.reset'
+  | 'contact.form.direct'
+  | 'detail.back'
+  | 'detail.prev'
+  | 'detail.next'
+  | 'detail.dossier'
+  | 'detail.editorial'
+  | 'detail.notfound'
+  | 'detail.notfound.sub'
+  | 'detail.spec'
   | 'modal.dossier';
 
 export type Translations = Record<TranslationKey, string>;
@@ -81,6 +207,7 @@ export const I18N: I18nStore = {
     'filter.entry': 'VAULT ENTRY',
     'filter.sort': 'SORT BY',
     'filters.title': 'FILTERS',
+    'filters.apply': 'SHOW RESULTS →',
     'drawer.title': 'COMPARE SPECIMENS',
     'drawer.slot': 'SLOTS',
     'drawer.clear': 'CLEAR ALL',
@@ -123,7 +250,7 @@ export const I18N: I18nStore = {
     'sort.idx': 'SPECIMEN INDEX',
     'empty.big': 'VAULT EMPTY // RECALIBRATE PARAMETERS',
     'empty.sub': 'NO SPECIMENS MATCH THE CURRENT TELEMETRY BAND',
-    'calibrating': 'CALIBRATING…',
+    calibrating: 'CALIBRATING…',
     'origin.tuscany': 'TUSCANY',
     'origin.andalusia': 'ANDALUSIA',
     'origin.morocco': 'MOROCCO',
@@ -179,9 +306,12 @@ export const I18N: I18nStore = {
     'footer.links': 'INDEX',
     'about.tag': 'Atelier dossier',
     'about.title': 'The<br/>atelier.',
-    'about.lede': 'LEATHER//ART is a single-bench atelier in Tbilisi. Every specimen is pit-tanned, hand-cut, and catalogued before it leaves the vault.',
-    'about.body1': 'We work the slow way. Hides rest in mimosa-bark pits for weeks, not hours. Each shell is skived, saddle-stitched in waxed linen, and edge-painted by hand. Nothing is rushed; nothing is reprinted.',
-    'about.body2': 'The archive is the record. Every piece carries a serial, a coordinate, and a certificate — a manuscript written in tannin. When an edition closes, it closes for good.',
+    'about.lede':
+      'LEATHER//ART is a single-bench atelier in Tbilisi. Every specimen is pit-tanned, hand-cut, and catalogued before it leaves the vault.',
+    'about.body1':
+      'We work the slow way. Hides rest in mimosa-bark pits for weeks, not hours. Each shell is skived, saddle-stitched in waxed linen, and edge-painted by hand. Nothing is rushed; nothing is reprinted.',
+    'about.body2':
+      'The archive is the record. Every piece carries a serial, a coordinate, and a certificate — a manuscript written in tannin. When an edition closes, it closes for good.',
     'about.stats': 'Atelier readout',
     'about.stat.founded': 'MMXCI',
     'about.stat.founded.sub': 'cycle founded',
@@ -200,18 +330,21 @@ export const I18N: I18nStore = {
     'about.p3.v': 'A hide is a manuscript; the tannin is the ink.',
     'journal.tag': 'Field notes',
     'journal.title': 'The<br/>journal.',
-    'journal.sub': 'Notes from the bench — tannage logs, material studies, and dispatches from the vault.',
+    'journal.sub':
+      'Notes from the bench — tannage logs, material studies, and dispatches from the vault.',
     'journal.read': 'READ ENTRY →',
     'journal.field': 'FIELD NOTE',
     'archive.tag': 'Redacted index',
     'archive.title': 'The<br/>archive.',
-    'archive.sub': 'Specimens filed without provenance. Origin redacted, documentation incomplete, catalogued by hand.',
+    'archive.sub':
+      'Specimens filed without provenance. Origin redacted, documentation incomplete, catalogued by hand.',
     'archive.redacted': 'ORIGIN REDACTED',
     'archive.count': 'FILED SPECIMENS',
     'archive.empty': 'ARCHIVE SEALED // NO REDACTED SPECIMENS ON RECORD',
     'contact.tag': 'Transmission',
     'contact.title': 'Make<br/>contact.',
-    'contact.sub': 'Commissions, archive inquiries, and press. We answer every transmission — slowly, like everything here.',
+    'contact.sub':
+      'Commissions, archive inquiries, and press. We answer every transmission — slowly, like everything here.',
     'contact.k.coords': 'COORDINATES',
     'contact.k.hours': 'BENCH HOURS',
     'contact.k.response': 'RESPONSE TIME',
@@ -260,6 +393,7 @@ export const I18N: I18nStore = {
     'filter.entry': 'სარდაფში შეტანა',
     'filter.sort': 'დალაგება',
     'filters.title': 'ფილტრები',
+    'filters.apply': 'შედეგების ჩვენება →',
     'drawer.title': 'ნიმუშების შედარება',
     'drawer.slot': 'სლოტი',
     'drawer.clear': 'გასუფთავება',
@@ -302,7 +436,7 @@ export const I18N: I18nStore = {
     'sort.idx': 'ნიმუშის ინდექსი',
     'empty.big': 'სარდაფი ცარიელია // გადააწყვე პარამეტრები',
     'empty.sub': 'არცერთი ნიმუში არ შეესაბამება მიმდინარე ტელემეტრიას',
-    'calibrating': 'კალიბრება…',
+    calibrating: 'კალიბრება…',
     'origin.tuscany': 'ტოსკანა',
     'origin.andalusia': 'ანდალუსია',
     'origin.morocco': 'მაროკო',
@@ -358,9 +492,12 @@ export const I18N: I18nStore = {
     'footer.links': 'ინდექსი',
     'about.tag': 'ატელიეს დოსიე',
     'about.title': 'ატელიე.',
-    'about.lede': 'LEATHER//ART არის ერთ-მაგიდიანი ატელიე თბილისში. ყოველი ნიმუში ორმოში თრიმულია, ხელით ჭრილი და კატალოგებული სარდაფიდან გასვლამდე.',
-    'about.body1': 'ჩვენ ნელა ვმუშაობთ. ტყავი მიმოზის ქერქის ორმოებში ისვენებს კვირები, არა საათები. ყოველი ნაჭერი გათხელებულია, ცვილიანი ტილოთი ნაკერი და ხელით შეღებილი კიდით. არაფერი ჩქარდება; არაფერი გადაიბეჭდება.',
-    'about.body2': 'არქივი არის ჩანაწერი. ყოველ ნაჭერს აქვს სერია, კოორდინატი და სერტიფიკატი — ტანინით დაწერილი ხელნაწერი. როცა გამოცემა იხურება, საბოლოოდ იხურება.',
+    'about.lede':
+      'LEATHER//ART არის ერთ-მაგიდიანი ატელიე თბილისში. ყოველი ნიმუში ორმოში თრიმულია, ხელით ჭრილი და კატალოგებული სარდაფიდან გასვლამდე.',
+    'about.body1':
+      'ჩვენ ნელა ვმუშაობთ. ტყავი მიმოზის ქერქის ორმოებში ისვენებს კვირები, არა საათები. ყოველი ნაჭერი გათხელებულია, ცვილიანი ტილოთი ნაკერი და ხელით შეღებილი კიდით. არაფერი ჩქარდება; არაფერი გადაიბეჭდება.',
+    'about.body2':
+      'არქივი არის ჩანაწერი. ყოველ ნაჭერს აქვს სერია, კოორდინატი და სერტიფიკატი — ტანინით დაწერილი ხელნაწერი. როცა გამოცემა იხურება, საბოლოოდ იხურება.',
     'about.stats': 'ატელიეს მონაცემი',
     'about.stat.founded': 'MMXCI',
     'about.stat.founded.sub': 'დაარსების ციკლი',
@@ -379,18 +516,21 @@ export const I18N: I18nStore = {
     'about.p3.v': 'ტყავი ხელნაწერია; ტანინი — მელანი.',
     'journal.tag': 'ველის ჩანაწერები',
     'journal.title': 'ჟურნალი.',
-    'journal.sub': 'ჩანაწერები მაგიდიდან — თრიმვის ჟურნალები, მასალის კვლევები და დეპეშები სარდაფიდან.',
+    'journal.sub':
+      'ჩანაწერები მაგიდიდან — თრიმვის ჟურნალები, მასალის კვლევები და დეპეშები სარდაფიდან.',
     'journal.read': 'ჩანაწერის წაკითხვა →',
     'journal.field': 'ველის ჩანაწერი',
     'archive.tag': 'რედაქტირებული ინდექსი',
     'archive.title': 'არქივი.',
-    'archive.sub': 'ნიმუშები წარმოშობის გარეშე. წარმოშობა დაფარულია, დოკუმენტაცია არასრულია, ხელით კატალოგებული.',
+    'archive.sub':
+      'ნიმუშები წარმოშობის გარეშე. წარმოშობა დაფარულია, დოკუმენტაცია არასრულია, ხელით კატალოგებული.',
     'archive.redacted': 'წარმოშობა დაფარულია',
     'archive.count': 'დარეგისტრირებული ნიმუში',
     'archive.empty': 'არქივი დალუქულია // არცერთი რედაქტირებული ნიმუში',
     'contact.tag': 'გადაცემა',
     'contact.title': 'დაგვიკავშირდი.',
-    'contact.sub': 'შეკვეთები, არქივის კითხვები და პრესა. ჩვენ ვპასუხობთ ყოველ გადაცემას — ნელა, როგორც ყველაფერს აქ.',
+    'contact.sub':
+      'შეკვეთები, არქივის კითხვები და პრესა. ჩვენ ვპასუხობთ ყოველ გადაცემას — ნელა, როგორც ყველაფერს აქ.',
     'contact.k.coords': 'კოორდინატები',
     'contact.k.hours': 'სამუშაო საათები',
     'contact.k.response': 'პასუხის დრო',
@@ -439,6 +579,7 @@ export const I18N: I18nStore = {
     'filter.entry': 'ВХОД В АРХИВ',
     'filter.sort': 'СОРТИРОВКА',
     'filters.title': 'ФИЛЬТРЫ',
+    'filters.apply': 'ПОКАЗАТЬ РЕЗУЛЬТАТЫ →',
     'drawer.title': 'СРАВНЕНИЕ ОБРАЗЦОВ',
     'drawer.slot': 'СЛОТЫ',
     'drawer.clear': 'ОЧИСТИТЬ',
@@ -481,7 +622,7 @@ export const I18N: I18nStore = {
     'sort.idx': 'ИНДЕКС ОБРАЗЦА',
     'empty.big': 'ХРАНИЛИЩЕ ПУСТО // ПЕРЕКАЛИБРУЙТЕ',
     'empty.sub': 'НЕТ ОБРАЗЦОВ В ТЕКУЩЕМ КОРИДОРЕ ТЕЛЕМЕТРИИ',
-    'calibrating': 'КАЛИБРОВКА…',
+    calibrating: 'КАЛИБРОВКА…',
     'origin.tuscany': 'ТОСКАНА',
     'origin.andalusia': 'АНДАЛУСИЯ',
     'origin.morocco': 'МАРОККО',
@@ -537,9 +678,12 @@ export const I18N: I18nStore = {
     'footer.links': 'ИНДЕКС',
     'about.tag': 'Досье ателье',
     'about.title': 'Ателье.',
-    'about.lede': 'LEATHER//ART — ателье одного верстака в Тбилиси. Каждый образец дублён в яме, скроен и каталогизирован вручную, прежде чем покинуть хранилище.',
-    'about.body1': 'Мы работаем медленно. Шкуры отдыхают в ямах с корой мимозы неделями, а не часами. Каждая деталь снята, сшита вощёным льном и окрашена по краю вручную. Ничто не спешит; ничто не переиздаётся.',
-    'about.body2': 'Архив — это запись. Каждое изделие несёт серию, координату и сертификат — рукопись, написанную танином. Когда тираж закрывается, он закрывается навсегда.',
+    'about.lede':
+      'LEATHER//ART — ателье одного верстака в Тбилиси. Каждый образец дублён в яме, скроен и каталогизирован вручную, прежде чем покинуть хранилище.',
+    'about.body1':
+      'Мы работаем медленно. Шкуры отдыхают в ямах с корой мимозы неделями, а не часами. Каждая деталь снята, сшита вощёным льном и окрашена по краю вручную. Ничто не спешит; ничто не переиздаётся.',
+    'about.body2':
+      'Архив — это запись. Каждое изделие несёт серию, координату и сертификат — рукопись, написанную танином. Когда тираж закрывается, он закрывается навсегда.',
     'about.stats': 'Сводка ателье',
     'about.stat.founded': 'MMXCI',
     'about.stat.founded.sub': 'цикл основания',
@@ -558,18 +702,21 @@ export const I18N: I18nStore = {
     'about.p3.v': 'Шкура — рукопись; танин — чернила.',
     'journal.tag': 'Полевые заметки',
     'journal.title': 'Журнал.',
-    'journal.sub': 'Заметки от верстака — журналы дубления, исследования материалов и депеши из хранилища.',
+    'journal.sub':
+      'Заметки от верстака — журналы дубления, исследования материалов и депеши из хранилища.',
     'journal.read': 'ЧИТАТЬ ЗАПИСЬ →',
     'journal.field': 'ПОЛЕВАЯ ЗАМЕТКА',
     'archive.tag': 'Редактированный индекс',
     'archive.title': 'Архив.',
-    'archive.sub': 'Образцы, занесённые без происхождения. Происхождение скрыто, документация неполна, каталогизировано вручную.',
+    'archive.sub':
+      'Образцы, занесённые без происхождения. Происхождение скрыто, документация неполна, каталогизировано вручную.',
     'archive.redacted': 'ПРОИСХОЖДЕНИЕ СКРЫТО',
     'archive.count': 'ЗАНЕСЁННЫХ ОБРАЗЦОВ',
     'archive.empty': 'АРХИВ ЗАПЕЧАТАН // НЕТ РЕДАКТИРОВАННЫХ ОБРАЗЦОВ',
     'contact.tag': 'Передача',
     'contact.title': 'Связаться.',
-    'contact.sub': 'Заказы, запросы по архиву и пресса. Мы отвечаем на каждую передачу — медленно, как и всё здесь.',
+    'contact.sub':
+      'Заказы, запросы по архиву и пресса. Мы отвечаем на каждую передачу — медленно, как и всё здесь.',
     'contact.k.coords': 'КООРДИНАТЫ',
     'contact.k.hours': 'ЧАСЫ ВЕРСТАКА',
     'contact.k.response': 'ВРЕМЯ ОТВЕТА',

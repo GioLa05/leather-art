@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Cursor from '@/components/Cursor';
 import StatusBar from '@/components/StatusBar';
 import Nav from '@/components/Nav';
 import LandingFooter from '@/components/landing/LandingFooter';
 import { Lang, t } from '@/i18n/translations';
+import { useLang } from '@/i18n/LangContext';
 
 interface PageShellProps {
   /** Nav id to mark active (matches NavItem.id). */
@@ -23,7 +24,7 @@ interface PageShellProps {
  * stay consistent without duplicating the wiring.
  */
 export default function PageShell({ activeId, children, footer = true }: PageShellProps) {
-  const [lang, setLang] = useState<Lang>('EN');
+  const { lang, setLang } = useLang();
 
   return (
     <>

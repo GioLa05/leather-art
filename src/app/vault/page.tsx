@@ -12,8 +12,9 @@ import DossierView from '@/components/vault/DossierView';
 import VaultSpecimenGrid from '@/components/vault/SpecimenGrid';
 import CompareDrawer from '@/components/vault/CompareDrawer';
 import SpecimenModal from '@/components/vault/SpecimenModal';
-import { Lang, t } from '@/i18n/translations';
-import { VAULT_SPECIMENS, ORIGINS, TOTAL_SPECIMENS, IN_VAULT, VaultSpecimen, GrainKind, OriginKind } from '@/data/specimens';
+import { t } from '@/i18n/translations';
+import { useLang } from '@/i18n/LangContext';
+import { VAULT_SPECIMENS, ORIGINS, TOTAL_SPECIMENS, IN_VAULT, VaultSpecimen } from '@/data/specimens';
 import { Filters } from '@/types/vault';
 
 // ─── Helpers ──────────────────────────────────────────────────
@@ -139,7 +140,7 @@ function applyFilters(cat: string, f: Filters): VaultSpecimen[] {
 
 // ─── Component ────────────────────────────────────────────────
 export default function VaultPage() {
-  const [lang, setLang] = useState<Lang>('EN');
+  const { lang, setLang } = useLang();
   const [activeCat, setActiveCat] = useState('all');
   const [view, setView] = useState<'dossier' | 'specimen'>('dossier');
   const [selected, setSelected] = useState<number[]>([]);

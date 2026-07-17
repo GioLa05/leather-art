@@ -9,11 +9,12 @@ import Marquee from '@/components/landing/Marquee';
 import SpecimenGrid from '@/components/landing/SpecimenGrid';
 import Telemetry from '@/components/landing/Telemetry';
 import LandingFooter from '@/components/landing/LandingFooter';
-import { Lang, t } from '@/i18n/translations';
+import { t } from '@/i18n/translations';
+import { useLang } from '@/i18n/LangContext';
 import { LANDING_SPECIMENS } from '@/data/specimens';
 
 export default function LandingPage() {
-  const [lang, setLang] = useState<Lang>('EN');
+  const { lang, setLang } = useLang();
   const [activeSpec, setActiveSpec] = useState(2);
   const [scanRun, setScanRun] = useState(true);
 

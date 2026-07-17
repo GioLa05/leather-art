@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Silhouette from '@/components/Silhouette';
 import { Lang, t } from '@/i18n/translations';
 import { VAULT_SPECIMENS, VaultSpecimen } from '@/data/specimens';
+import { formatPrice } from '@/lib/price';
 
 function pad2(n: number) { return String(n).padStart(2, '0'); }
 function pad3(n: number) { return String(n).padStart(3, '0'); }
@@ -33,8 +34,11 @@ const DossierHead = styled.div`
   }
 
   @media (max-width: 600px) {
-    grid-template-columns: 52px 60px 1fr 60px 72px 36px;
-    .col-grain, .col-origin, .col-weight { display: none; }
+    grid-template-columns: 44px 1fr 56px 72px 36px;
+    gap: 8px;
+    padding: 10px 16px;
+    min-width: 0;
+    .col-grain, .col-origin, .col-weight, .col-idx { display: none; }
   }
 `;
 
@@ -60,9 +64,11 @@ const DRow = styled.div<{ $selected: boolean }>`
   }
 
   @media (max-width: 600px) {
-    grid-template-columns: 52px 60px 1fr 60px 72px 36px;
-    min-width: 480px;
-    .col-grain, .col-origin, .col-weight { display: none; }
+    grid-template-columns: 44px 1fr 56px 72px 36px;
+    gap: 8px;
+    padding: 10px 16px;
+    min-width: 0;
+    .col-grain, .col-origin, .col-weight, .col-idx { display: none; }
   }
 
   .thumb {
@@ -74,8 +80,10 @@ const DRow = styled.div<{ $selected: boolean }>`
     justify-content: center;
     background: var(--bone);
     flex-shrink: 0;
+    overflow: hidden;
 
     svg { width: 32px; height: 32px; }
+    img { width: 100%; height: 100%; object-fit: cover; display: block; }
   }
   .nm {
     font-family: var(--mono);
@@ -160,7 +168,7 @@ export default function DossierView({ lang, filtered, selected, onToggleSelect, 
     <DossierWrap>
       <DossierHead>
         <div>{t(lang, 'th.img')}</div>
-        <div>{t(lang, 'th.idx')}</div>
+        <div className="col-idx">{t(lang, 'th.idx')}</div>
         <div>{t(lang, 'th.name')}</div>
         <div>{t(lang, 'th.tan')}</div>
         <div className="col-grain">{t(lang, 'th.grain')}</div>
@@ -176,14 +184,19 @@ export default function DossierView({ lang, filtered, selected, onToggleSelect, 
         </EmptyState>
       ) : filtered.map(s => (
         <DRow key={s.i} $selected={selected.includes(s.i)} onClick={() => onOpenModal(s.i)}>
-          <div className="thumb"><Silhouette kind={s.sil} /></div>
-          <div className="v">{pad2(s.i)}/{pad3(VAULT_SPECIMENS.length)}</div>
-          <div className="nm">{s.name}</div>
+          <div className="thumb">
+            {s.image
+              // eslint-disable-next-line @next/next/no-img-element
+              ? <img src={s.image} alt="" />
+              : <Silhouette kind={s.sil} />}
+          </div>
+          <div className="v col-idx">{pad2(s.i)}/{pad3(VAULT_SPECIMENS.length)}</div>
+          <div className="nm">{s.name[lang]}</div>
           <div className="v">{pad3(s.tan)}H</div>
           <div className="v col-grain">{t(lang, `grain.${s.grain.toLowerCase()}` as Parameters<typeof t>[1])}</div>
           <div className="v col-origin">{t(lang, `origin.${s.origin.toLowerCase()}` as Parameters<typeof t>[1])}</div>
           <div className="v col-weight">{s.weight} G</div>
-          <div className="price">€{s.price}</div>
+          <div className="price">{formatPrice(lang, s)}</div>
           <AddBtn onClick={e => { e.stopPropagation(); onToggleSelect(s.i); }} aria-label="add to compare">
             {selected.includes(s.i) ? '×' : '+'}
           </AddBtn>

@@ -9,6 +9,7 @@ import { Section } from '@/components/interior/InteriorHeader';
 import { Lang, t } from '@/i18n/translations';
 import { TOTAL_SPECIMENS, grainDensity, VaultSpecimen } from '@/data/specimens';
 import { findSpecimenBySlug, orderedSpecimens, specimenSlug } from '@/lib/specimen-url';
+import { formatPrice } from '@/lib/price';
 
 function pad2(n: number) { return String(n).padStart(2, '0'); }
 function pad3(n: number) { return String(n).padStart(3, '0'); }
@@ -62,6 +63,13 @@ const Frame = styled.div`
   justify-content: center;
 
   svg { width: 72%; height: 72%; }
+  img.photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
   .index, .stamp {
     position: absolute;
@@ -241,7 +249,7 @@ function DossierBody(lang: Lang, spec: VaultSpecimen) {
     [t(lang, 'ms.weight'), `${spec.weight} g ± 6`],
     [t(lang, 'ms.coord'), spec.coord],
     [t(lang, 'ms.batch'), spec.sn],
-    [t(lang, 'ms.finish'), spec.finish],
+    [t(lang, 'ms.finish'), spec.finish[lang]],
     [t(lang, 'ms.entry'), spec.entry],
   ];
 
@@ -252,17 +260,21 @@ function DossierBody(lang: Lang, spec: VaultSpecimen) {
       </Back>
       <Dossier>
         <Frame aria-hidden="true">
+          {spec.image && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className="photo" src={spec.image} alt="" />
+          )}
           <span className="index mono">IDX. {pad2(spec.i)} / {pad3(TOTAL_SPECIMENS)}</span>
           <span className="stamp mono">⌖ {spec.coord}</span>
-          <Silhouette kind={spec.sil} />
+          {!spec.image && <Silhouette kind={spec.sil} />}
         </Frame>
 
         <VRule className="vrule" />
 
         <Detail>
           <div className="eyebrow">SPECIMEN {pad2(spec.i)} / {pad3(TOTAL_SPECIMENS)} · {spec.sn}</div>
-          <h1>{nameEl(spec.name)}</h1>
-          {spec.quote && <p className="tagline">{spec.quote}</p>}
+          <h1>{nameEl(spec.name[lang])}</h1>
+          {spec.quote[lang] && <p className="tagline">{spec.quote[lang]}</p>}
 
           <h3>{t(lang, 'detail.spec')}</h3>
           <SpecTable>
@@ -275,10 +287,10 @@ function DossierBody(lang: Lang, spec: VaultSpecimen) {
           </SpecTable>
 
           <h3>{t(lang, 'detail.editorial')}</h3>
-          <Editorial>{spec.editorial}</Editorial>
+          <Editorial>{spec.editorial[lang]}</Editorial>
 
           <Foot>
-            <span className="price">€{spec.price}</span>
+            <span className="price">{formatPrice(lang, spec)}</span>
             <button type="button" className="request">{t(lang, 'modal.request')}</button>
           </Foot>
         </Detail>

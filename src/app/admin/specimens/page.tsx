@@ -52,13 +52,22 @@ function nextSerial(all: { sn: string }[]): string {
 function blankVault(data: SpecPayload): VaultSpecimen {
   const sn = nextSerial([...data.vault, ...data.landing]);
   const i = (data.vault.reduce((m, s) => Math.max(m, s.i), 0) || 0) + 1;
+  const nn = String(i).padStart(2, '0');
   return {
-    i, cat: 'bags', sn, name: `BAG // NEW_${String(i).padStart(2, '0')}`, sil: 'tote',
+    i, cat: 'bags', sn,
+    name: { EN: `BAG // NEW_${nn}`, KA: `ჩანთა // ახალი_${nn}`, RU: `СУМКА // НОВАЯ_${nn}` },
+    sil: 'tote',
     tan: 120, grain: 'MEDIUM', origin: 'TUSCANY', weight: 500, coord: '41.71/44.83',
     // Within the vault's default date filter band (2099.03.14–2099.11.02) so a
     // freshly created specimen is visible on /vault without re-filtering.
-    entry: '2099.10.15', price: 0, span: 's1', quote: '', finish: 'Hand-burnished',
-    editorial: 'New specimen awaiting catalogue notes.',
+    entry: '2099.10.15', price: 0, priceGel: 0, span: 's1',
+    quote: { EN: '', KA: '', RU: '' },
+    finish: { EN: 'Hand-burnished', KA: 'ხელით გაპრიალებული', RU: 'Ручная полировка' },
+    editorial: {
+      EN: 'New specimen awaiting catalogue notes.',
+      KA: 'ახალი ნიმუში კატალოგის ჩანაწერების მოლოდინში.',
+      RU: 'Новый образец в ожидании заметок каталога.',
+    },
   };
 }
 
@@ -99,12 +108,15 @@ export default function SpecimensListPage() {
   const duplicate = async (s: VaultSpecimen) => {
     const sn = nextSerial([...data.vault, ...data.landing]);
     const i = data.vault.reduce((m, x) => Math.max(m, x.i), 0) + 1;
-    const copy: VaultSpecimen = { ...s, sn, i, name: `${s.name} (COPY)` };
+    const copy: VaultSpecimen = {
+      ...s, sn, i,
+      name: { EN: `${s.name.EN} (COPY)`, KA: `${s.name.KA} (ასლი)`, RU: `${s.name.RU} (КОПИЯ)` },
+    };
     await save({ ...data, vault: [...data.vault, copy] }, 'DUPLICATED');
   };
 
   const remove = async (s: VaultSpecimen) => {
-    if (!confirm(`Delete ${s.sn} — ${s.name}? This cannot be undone.`)) return;
+    if (!confirm(`Delete ${s.sn} — ${s.name.EN}? This cannot be undone.`)) return;
     await save({ ...data, vault: data.vault.filter((x) => x.i !== s.i) }, 'DELETED');
   };
 
@@ -121,15 +133,16 @@ export default function SpecimensListPage() {
     const derived: LandingSpecimen = {
       id: String((data.landing.reduce((m, x) => Math.max(m, +x.id), 0) || 0) + 1).padStart(2, '0'),
       sn: s.sn, idx: String(data.landing.length + 1).padStart(2, '0'), span: s.span,
-      name: { EN: s.name, KA: s.name, RU: s.name },
-      sub: { EN: s.editorial, KA: s.editorial, RU: s.editorial },
-      quote: { EN: s.quote, KA: s.quote, RU: s.quote },
+      name: { ...s.name },
+      sub: { ...s.editorial },
+      quote: { ...s.quote },
       spec: {
         tan: `${s.tan}h`, grain: `${s.grain.toLowerCase()}`, origin: s.origin,
-        finish: s.finish, weight: `${s.weight} g`, edge: s.finish, cert: s.sn,
+        finish: s.finish.EN, weight: `${s.weight} g`, edge: s.finish.EN, cert: s.sn,
       },
       meta: [['TAN', s.grain], ['GRM', String(s.weight)], ['ORG', s.coord]],
       silhouette: s.sil,
+      image: s.image,
     };
     await save(
       { vault: data.vault.filter((x) => x.i !== s.i), landing: [...data.landing, derived] },
@@ -158,12 +171,12 @@ export default function SpecimensListPage() {
                   className="nm"
                   onClick={() => router.push(`/admin/specimens/${specimenSlug(s)}?type=vault`)}
                 >
-                  {s.name}
+                  {s.name.EN}
                 </span>
                 <br />
                 <span className="sn">{s.sn} · {s.cat}</span>
               </span>
-              <span>€{s.price}</span>
+              <span>${s.price} · ₾{s.priceGel}</span>
               <span>{s.tan}H</span>
               <span className="actions">
                 <button onClick={() => reorder(idx, -1)} aria-label="move up">↑</button>

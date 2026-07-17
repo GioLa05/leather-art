@@ -4,6 +4,7 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Lang, t } from '@/i18n/translations';
 import { VAULT_SPECIMENS } from '@/data/specimens';
+import { formatPrice } from '@/lib/price';
 
 function pad3(n: number) { return String(n).padStart(3, '0'); }
 
@@ -176,7 +177,7 @@ export default function CompareDrawer({ lang, selected, onToggleSelect, onClear 
           return (
             <DrawerSlot key={i} $empty={false}>
               <div className="top">
-                <span className="nm">{s.name}</span>
+                <span className="nm">{s.name[lang]}</span>
                 <button className="rm" onClick={() => onToggleSelect(s.i)}>[ × ]</button>
               </div>
               <div className="sn">{s.sn}</div>
@@ -185,7 +186,7 @@ export default function CompareDrawer({ lang, selected, onToggleSelect, onClear 
                 <div><span className="k">{t(lang, 'th.grain')}</span><span>{t(lang, `grain.${s.grain.toLowerCase()}` as Parameters<typeof t>[1])}</span></div>
                 <div><span className="k">{t(lang, 'th.origin')}</span><span>{t(lang, `origin.${s.origin.toLowerCase()}` as Parameters<typeof t>[1])}</span></div>
                 <div><span className="k">{t(lang, 'th.weight')}</span><span>{s.weight} G</span></div>
-                <div><span className="k">{t(lang, 'th.price')}</span><span>€{s.price}</span></div>
+                <div><span className="k">{t(lang, 'th.price')}</span><span>{formatPrice(lang, s)}</span></div>
               </div>
             </DrawerSlot>
           );

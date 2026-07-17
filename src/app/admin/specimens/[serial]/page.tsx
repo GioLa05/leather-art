@@ -9,6 +9,7 @@ import { useToast } from '@/components/admin/Toast';
 import { getJSON, sendJSON } from '@/lib/admin/client';
 import { useUnsavedGuard, useCmdS } from '@/lib/admin/hooks';
 import Silhouette from '@/components/Silhouette';
+import ImagePicker from '@/components/admin/ImagePicker';
 import {
   GRAINS, ORIGINS, VaultSpecimen, LandingSpecimen, SilhouetteKind,
 } from '@/data/specimens';
@@ -112,7 +113,7 @@ function SpecimenEditor() {
   return (
     <AdminShell>
       <Eyebrow>§01 · SPECIMEN EDITOR · {type.toUpperCase()}</Eyebrow>
-      <H1>{type === 'vault' ? vault!.name : landing!.name.EN}</H1>
+      <H1>{type === 'vault' ? vault!.name.EN : landing!.name.EN}</H1>
       <Row style={{ margin: '18px 0' }}>
         <Button $variant="primary" onClick={save} data-testid="save" disabled={!dirty}>
           {dirty ? 'Save (⌘S)' : 'Saved'}
@@ -132,8 +133,6 @@ function SpecimenEditor() {
                     <Input value={vault.sn} onChange={(e) => patchV({ sn: e.target.value })} /></Field>
                   <Field><span className="k">Index</span>
                     <Input type="number" value={vault.i} onChange={(e) => patchV({ i: +e.target.value })} /></Field>
-                  <Field><span className="k">Name</span>
-                    <Input value={vault.name} onChange={(e) => patchV({ name: e.target.value })} data-testid="f-name" /></Field>
                   <Field><span className="k">Category</span>
                     <Select value={vault.cat} onChange={(e) => patchV({ cat: e.target.value })}>
                       {CATS.filter((c) => !c.isAll).map((c) => <option key={c.id} value={c.id}>{c.id}</option>)}
@@ -167,15 +166,31 @@ function SpecimenEditor() {
                     <Input value={vault.coord} onChange={(e) => patchV({ coord: e.target.value })} /></Field>
                   <Field><span className="k">Entry date</span>
                     <Input value={vault.entry} onChange={(e) => patchV({ entry: e.target.value })} /></Field>
-                  <Field><span className="k">Price (€)</span>
-                    <Input type="number" value={vault.price} onChange={(e) => patchV({ price: +e.target.value })} /></Field>
-                  <Field><span className="k">Finish</span>
-                    <Input value={vault.finish} onChange={(e) => patchV({ finish: e.target.value })} /></Field>
+                  <Field><span className="k">Price USD ($) · EN/RU</span>
+                    <Input type="number" value={vault.price} onChange={(e) => patchV({ price: +e.target.value })} data-testid="f-price-usd" /></Field>
+                  <Field><span className="k">Price GEL (₾) · KA</span>
+                    <Input type="number" value={vault.priceGel} onChange={(e) => patchV({ priceGel: +e.target.value })} data-testid="f-price-gel" /></Field>
                 </Two>
-                <Field><span className="k">Quote</span>
-                  <Input value={vault.quote} onChange={(e) => patchV({ quote: e.target.value })} /></Field>
-                <Field><span className="k">Editorial</span>
-                  <Textarea value={vault.editorial} onChange={(e) => patchV({ editorial: e.target.value })} /></Field>
+              </Panel>
+              <Panel>
+                <h2>Trilingual copy</h2>
+                <Tabs>
+                  {LANGS.map((l) => (
+                    <button key={l} className={tab === l ? 'active' : ''} onClick={() => setTab(l)} data-testid={`lang-tab-${l}`}>{l}</button>
+                  ))}
+                </Tabs>
+                <Field><span className="k">Name ({tab})</span>
+                  <Input value={vault.name[tab]} onChange={(e) => patchV({ name: { ...vault.name, [tab]: e.target.value } })} data-testid="f-name" /></Field>
+                <Field><span className="k">Quote ({tab})</span>
+                  <Input value={vault.quote[tab]} onChange={(e) => patchV({ quote: { ...vault.quote, [tab]: e.target.value } })} /></Field>
+                <Field><span className="k">Finish ({tab})</span>
+                  <Input value={vault.finish[tab]} onChange={(e) => patchV({ finish: { ...vault.finish, [tab]: e.target.value } })} /></Field>
+                <Field><span className="k">Editorial ({tab})</span>
+                  <Textarea value={vault.editorial[tab]} onChange={(e) => patchV({ editorial: { ...vault.editorial, [tab]: e.target.value } })} /></Field>
+              </Panel>
+              <Panel>
+                <h2>Photo</h2>
+                <ImagePicker value={vault.image} onChange={(image) => patchV({ image })} />
               </Panel>
             </>
           )}
@@ -235,6 +250,10 @@ function SpecimenEditor() {
                 ))}
                 <Button onClick={() => patchL({ meta: [...landing.meta, ['KEY', 'value']] })}>+ Add pair</Button>
               </Panel>
+              <Panel>
+                <h2>Photo</h2>
+                <ImagePicker value={landing.image} onChange={(image) => patchL({ image })} />
+              </Panel>
             </>
           )}
         </div>
@@ -243,9 +262,12 @@ function SpecimenEditor() {
           <Meta style={{ marginBottom: 10 }}>LIVE PREVIEW</Meta>
           <div className="card">
             <div className="frame">
-              <Silhouette kind={type === 'vault' ? vault!.sil : landing!.silhouette} />
+              {(type === 'vault' ? vault!.image : landing!.image)
+                // eslint-disable-next-line @next/next/no-img-element
+                ? <img src={type === 'vault' ? vault!.image : landing!.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                : <Silhouette kind={type === 'vault' ? vault!.sil : landing!.silhouette} />}
             </div>
-            <div className="nm">{type === 'vault' ? vault!.name : landing!.name.EN}</div>
+            <div className="nm">{type === 'vault' ? vault!.name[tab] : landing!.name[tab]}</div>
             <div className="sn">{type === 'vault' ? vault!.sn : landing!.sn}</div>
             <div className="rows">
               {type === 'vault' && vault && (
@@ -254,7 +276,7 @@ function SpecimenEditor() {
                   <div><span className="k">Grain</span><span>{vault.grain}</span></div>
                   <div><span className="k">Origin</span><span>{vault.origin}</span></div>
                   <div><span className="k">Weight</span><span>{vault.weight} g</span></div>
-                  <div><span className="k">Price</span><span>€{vault.price}</span></div>
+                  <div><span className="k">Price</span><span>${vault.price} · ₾{vault.priceGel}</span></div>
                 </>
               )}
               {type === 'landing' && landing && (

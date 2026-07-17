@@ -7,6 +7,7 @@ import Silhouette from '@/components/Silhouette';
 import { Lang, t } from '@/i18n/translations';
 import { VAULT_SPECIMENS, TOTAL_SPECIMENS, VaultSpecimen, GrainKind } from '@/data/specimens';
 import { specimenSlug } from '@/lib/specimen-url';
+import { formatPrice } from '@/lib/price';
 
 function pad2(n: number) { return String(n).padStart(2, '0'); }
 function pad3(n: number) { return String(n).padStart(3, '0'); }
@@ -108,6 +109,13 @@ const ModalGallery = styled.div`
     justify-content: center;
     padding: 28px;
     svg { width: 70%; height: 100%; max-height: 240px; }
+    img {
+      width: 100%;
+      height: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border: 0.5px solid var(--hair-strong);
+    }
   }
 
   @media (max-width: 700px) {
@@ -383,13 +391,19 @@ export default function SpecimenModal({
             </ModalTopBar>
             <ModalGallery>
               <div className="primary">
-                <Silhouette kind={modalSpec.sil} />
+                {modalSpec.image
+                  // eslint-disable-next-line @next/next/no-img-element
+                  ? <img src={modalSpec.image} alt={modalSpec.name[lang]} />
+                  : <Silhouette kind={modalSpec.sil} />}
               </div>
               <ModalThumbs>
                 {GALLERY_VIEWS.map(gi => (
                   <button key={gi} className={gi === modalGalleryIdx ? 'active' : ''}
                     onClick={() => onGalleryChange(gi)}>
-                    <Silhouette kind={modalSpec.sil} />
+                    {modalSpec.image
+                      // eslint-disable-next-line @next/next/no-img-element
+                      ? <img src={modalSpec.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : <Silhouette kind={modalSpec.sil} />}
                   </button>
                 ))}
               </ModalThumbs>
@@ -410,16 +424,16 @@ export default function SpecimenModal({
                 <span className="sep">//</span>
                 <span>{t(lang, 'modal.bc.all')}</span>
                 <span className="sep">//</span>
-                <span className="cur">{modalSpec.name.replace(' // ', '_')}</span>
+                <span className="cur">{modalSpec.name[lang].replace(' // ', '_')}</span>
               </div>
               <div className="idx">SPECIMEN {pad2(modalSpec.i)} / {pad3(TOTAL_SPECIMENS)}</div>
               <h2>
-                {modalSpec.name.includes(' // ')
-                  ? <>{modalSpec.name.split(' // ')[0]}<br /><span className="slash">//</span>{modalSpec.name.split(' // ')[1]}</>
-                  : modalSpec.name
+                {modalSpec.name[lang].includes(' // ')
+                  ? <>{modalSpec.name[lang].split(' // ')[0]}<br /><span className="slash">//</span>{modalSpec.name[lang].split(' // ')[1]}</>
+                  : modalSpec.name[lang]
                 }
               </h2>
-              {modalSpec.quote && <div className="tagline">{modalSpec.quote}</div>}
+              {modalSpec.quote[lang] && <div className="tagline">{modalSpec.quote[lang]}</div>}
               <SpecTable>
                 {[
                   [t(lang, 'ms.tannage'), 'Vegetable · mimosa'],
@@ -429,7 +443,7 @@ export default function SpecimenModal({
                   [t(lang, 'ms.weight'), `${modalSpec.weight} g ± 6`],
                   [t(lang, 'ms.coord'), modalSpec.coord],
                   [t(lang, 'ms.batch'), modalSpec.sn],
-                  [t(lang, 'ms.finish'), modalSpec.finish],
+                  [t(lang, 'ms.finish'), modalSpec.finish[lang]],
                   [t(lang, 'ms.entry'), modalSpec.entry],
                 ].map(([k, v]) => (
                   <div key={k} className="row">
@@ -438,10 +452,10 @@ export default function SpecimenModal({
                   </div>
                 ))}
               </SpecTable>
-              <ModalEditorial>{modalSpec.editorial}</ModalEditorial>
+              <ModalEditorial>{modalSpec.editorial[lang]}</ModalEditorial>
             </ModalBody>
             <ModalFoot>
-              <span className="price">€{modalSpec.price}</span>
+              <span className="price">{formatPrice(lang, modalSpec)}</span>
               <div className="actions">
                 <button onClick={() => onToggleSelect(modalSpec.i)}>
                   {selected.includes(modalSpec.i)

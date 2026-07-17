@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Silhouette, { SchematicSvg } from '@/components/Silhouette';
 import { Lang, t } from '@/i18n/translations';
 import { VAULT_SPECIMENS, VaultSpecimen } from '@/data/specimens';
+import { formatPrice } from '@/lib/price';
 
 function pad2(n: number) { return String(n).padStart(2, '0'); }
 function pad3(n: number) { return String(n).padStart(3, '0'); }
@@ -69,10 +70,19 @@ const SCardImg = styled.div`
   align-items: center;
   justify-content: center;
   padding: 10px;
+  min-height: 0;
   svg { width: 80%; height: 100%; max-height: 140px; }
+  img {
+    width: 100%;
+    height: 100%;
+    max-height: 140px;
+    object-fit: cover;
+    border: 0.5px solid var(--hair-strong);
+  }
 
   @media (max-width: 600px) {
     svg { max-height: 100px; }
+    img { max-height: 100px; }
   }
 `;
 
@@ -231,15 +241,20 @@ export default function SpecimenGrid({ lang, filtered, selected, onToggleSelect,
             <span className="sn">{s.sn}</span>
             <span>{pad2(s.i)} / {pad3(VAULT_SPECIMENS.length)}</span>
           </SCardHead>
-          <SCardImg aria-hidden="true"><Silhouette kind={s.sil} /></SCardImg>
-          <SCardName>{s.name}</SCardName>
+          <SCardImg aria-hidden="true">
+            {s.image
+              // eslint-disable-next-line @next/next/no-img-element
+              ? <img src={s.image} alt="" />
+              : <Silhouette kind={s.sil} />}
+          </SCardImg>
+          <SCardName>{s.name[lang]}</SCardName>
           <SCardMeta>
             <div><span className="k">{t(lang, 'th.tan')}</span><span>{pad3(s.tan)}H</span></div>
             <div><span className="k">{t(lang, 'th.origin')}</span><span>{t(lang, `origin.${s.origin.toLowerCase()}` as Parameters<typeof t>[1])}</span></div>
             <div><span className="k">{t(lang, 'th.weight')}</span><span>{s.weight} G</span></div>
           </SCardMeta>
           <SCardFoot>
-            <span className="price">€{s.price}</span>
+            <span className="price">{formatPrice(lang, s)}</span>
             <AddBtn onClick={e => { e.stopPropagation(); onToggleSelect(s.i); }}>
               {selected.includes(s.i) ? '×' : '+'}
             </AddBtn>
