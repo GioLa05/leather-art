@@ -8,7 +8,9 @@
     "start": "next start",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
-    "hash-password": "npx tsx scripts/hash-password.ts"
+    "hash-password": "npx tsx scripts/hash-password.ts",
+    "typecheck": "tsc --noEmit",
+    "prepare": "git config core.hooksPath githooks"
   },
   "dependencies": {
     "next": "14.2.29",
