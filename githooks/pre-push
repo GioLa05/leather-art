@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+#
+# Pre-push guard for LEATHER//ART.
+#
+# GitHub branch protection is paywalled on private personal repos, so this hook
+# is the local equivalent. It does two things:
+#
+#   1. Blocks direct pushes to the default branch — merges happen through pull
+#      requests. Deliberate exception:  ALLOW_MAIN_PUSH=1 git push
+#   2. Runs the validation suite before every push. Emergency escape hatch:
+#      SKIP_VALIDATE=1 git push
+#
+# Wired up automatically by the npm `prepare` script
+# (`git config core.hooksPath githooks`).
+
+set -euo pipefail
+
+DEFAULT_BRANCH="main"
+RED=$'\033[0;31m'; YEL=$'\033[0;33m'; GRN=$'\033[0;32m'; DIM=$'\033[2m'; OFF=$'\033[0m'
+
+# ── 1. Protect the default branch ────────────────────────────────────────────
+# stdin gives: <local ref> <local sha> <remote ref> <remote sha>
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  [ -z "${remote_ref:-}" ] && continue
+  if [ "$remote_ref" = "refs/heads/$DEFAULT_BRANCH" ]; then
+    if [ "${ALLOW_MAIN_PUSH:-0}" = "1" ]; then
+      printf '%s\n' "${YEL}⚠  pre-push: pushing directly to ${DEFAULT_BRANCH} (ALLOW_MAIN_PUSH=1).${OFF}"
+    else
+      printf '%s\n' "${RED}✖  pre-push: direct pushes to '${DEFAULT_BRANCH}' are blocked.${OFF}"
+      printf '%s\n' "   Open a pull request instead:  ${DIM}gh pr create${OFF}"
+      printf '%s\n' "   Deliberate override:          ${DIM}ALLOW_MAIN_PUSH=1 git push${OFF}"
+      exit 1
+    fi
+  fi
+done
+
+# ── 2. Validation suite ──────────────────────────────────────────────────────
+if [ "${SKIP_VALIDATE:-0}" = "1" ]; then
+  printf '%s\n' "${YEL}⚠  pre-push: validation skipped (SKIP_VALIDATE=1).${OFF}"
+  exit 0
+fi
+
+run_step() {
+  local label="$1"; shift
+  printf '%s\n' "${DIM}→ ${label}…${OFF}"
+  if ! "$@"; then
+    printf '%s\n' "${RED}✖  pre-push: ${label} failed — push aborted.${OFF}"
+    printf '%s\n' "   Emergency override: ${DIM}SKIP_VALIDATE=1 git push${OFF}"
+    exit 1
+  fi
+}
+
+run_step "type-check"      npx tsc --noEmit
+run_step "production build" npm run build
+run_step "playwright suite" npm test
+
+printf '%s\n' "${GRN}✔  pre-push: validation passed.${OFF}"

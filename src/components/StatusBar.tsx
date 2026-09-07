@@ -107,6 +107,8 @@ const LangBtn = styled.button<{ $active?: boolean }>`
   }
   @media (pointer: coarse) {
     cursor: pointer;
+    padding: 10px 12px;
+    min-height: 44px;
   }
 `;
 

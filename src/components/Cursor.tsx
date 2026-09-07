@@ -22,12 +22,15 @@ const CursorEl = styled.div`
   width: 14px;
   height: 14px;
   transform: translate3d(-50%, -50%, 0);
+  /* White + difference-blend inverts against whatever is underneath, so the
+     crosshair stays visible over both dark (choc) and light (bone/tan) areas. */
+  mix-blend-mode: difference;
 
   &::before,
   &::after {
     content: '';
     position: absolute;
-    background: var(--choc);
+    background: #fff;
   }
   &::before {
     left: 50%;
@@ -58,7 +61,8 @@ const CursorTrail = styled.div`
   will-change: transform;
   width: 22px;
   height: 22px;
-  border: 0.5px solid var(--choc);
+  border: 0.5px solid #fff;
+  mix-blend-mode: difference;
   transform: translate3d(-50%, -50%, 0);
   transition: transform 90ms linear;
 
@@ -86,6 +90,12 @@ export default function Cursor() {
     const onMouseMove = (e: MouseEvent) => {
       x = e.clientX;
       y = e.clientY;
+      // Reassert visibility on every move. The cursor tracks the pointer, so if
+      // the pointer is moving inside the page the cursor must be shown. Relying
+      // only on `mouseenter` to restore opacity let a stray `mouseleave` (window
+      // exit, native <select>, devtools) leave the cursor stuck hidden.
+      cursor.style.opacity = '1';
+      trail.style.opacity = '1';
       if (reducedMotion) {
         cursor.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
         trail.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
@@ -128,8 +138,8 @@ export default function Cursor() {
   return (
     <>
       <CursorGlobal />
-      <CursorTrail ref={trailRef} aria-hidden="true" />
-      <CursorEl ref={cursorRef} aria-hidden="true" />
+      <CursorTrail ref={trailRef} aria-hidden="true" data-testid="cursor-trail" />
+      <CursorEl ref={cursorRef} aria-hidden="true" data-testid="cursor" />
     </>
   );
 }
