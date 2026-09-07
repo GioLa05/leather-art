@@ -1,4 +1,24 @@
+import fs from 'fs';
+import path from 'path';
 import { defineConfig, devices } from '@playwright/test';
+
+/**
+ * Admin credentials live in .env.local (gitignored) so no real passphrase is
+ * committed. Next loads that file for the app itself, but the Playwright process
+ * does not — read the two keys the suite needs. Deliberately minimal rather than
+ * pulling in a dotenv dependency for four lines.
+ */
+function loadEnvLocal() {
+  const file = path.join(process.cwd(), '.env.local');
+  if (!fs.existsSync(file)) return;
+  for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+    const m = line.match(/^([A-Z0-9_]+)=(.*)$/);
+    if (!m) continue;
+    const [, key, raw] = m;
+    if (process.env[key] === undefined) process.env[key] = raw.trim();
+  }
+}
+loadEnvLocal();
 
 /**
  * Playwright config for LEATHER//ART. Spins up the Next dev server and runs

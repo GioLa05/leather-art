@@ -92,7 +92,7 @@ compile.
    Next's dotenv-expand otherwise blanks it. The script does this for you.
 3. `npm run dev`, open `http://localhost:3000/admin`, sign in.
 
-The test credentials used in CI/dev are `operator` / `specimen2099`.
+Admin credentials are read from `.env.local` (gitignored) — see `ADMIN-CREDENTIALS.local.md`. Generate a hash with `npm run hash-password -- '<passphrase>'`. No credentials are committed: this repository is public.
 
 ## Decisions to review (highlights — full list in DECISIONS.md)
 

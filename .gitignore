@@ -3,6 +3,7 @@ node_modules/
 .env
 .env.local
 .env*.local
+ADMIN-CREDENTIALS.local.md
 *.tsbuildinfo
 dist/
 out/

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { ADMIN_USERNAME, ADMIN_PASSWORD } from '../helpers';
 
 test.describe('Phase 3 — auth + middleware', () => {
   test('unauthenticated /admin redirects to /admin/login', async ({ page }) => {
@@ -14,7 +15,7 @@ test.describe('Phase 3 — auth + middleware', () => {
 
   test('wrong credentials are rejected on-brand', async ({ page }) => {
     await page.goto('/admin/login');
-    await page.fill('input[name="username"]', 'operator');
+    await page.fill('input[name="username"]', ADMIN_USERNAME);
     await page.fill('input[name="password"]', 'wrong-pass');
     await page.getByRole('button', { name: /Authenticate/ }).click();
     await expect(page.getByTestId('login-error')).toContainText('TRANSMISSION REJECTED');
@@ -24,8 +25,8 @@ test.describe('Phase 3 — auth + middleware', () => {
   test('correct credentials sign in; session persists; logout works', async ({ page }) => {
     // Exercise the real UI login form here.
     await page.goto('/admin/login');
-    await page.fill('input[name="username"]', 'operator');
-    await page.fill('input[name="password"]', 'specimen2099');
+    await page.fill('input[name="username"]', ADMIN_USERNAME);
+    await page.fill('input[name="password"]', ADMIN_PASSWORD);
     await page.getByRole('button', { name: /Authenticate/ }).click();
     await page.waitForURL(/\/admin$/, { timeout: 30_000 });
     await expect(page.getByRole('heading', { name: /Vault overview/ })).toBeVisible();

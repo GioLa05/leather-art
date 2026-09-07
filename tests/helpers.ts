@@ -1,5 +1,19 @@
 import { Page, expect } from '@playwright/test';
 
+/**
+ * Admin credentials come from .env.local (loaded in playwright.config.ts) so the
+ * real passphrase is never committed — this repo is public. Fail loudly rather
+ * than silently attempting a login that cannot succeed.
+ */
+export const ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? '';
+export const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? '';
+if (!ADMIN_USERNAME || !ADMIN_PASSWORD) {
+  throw new Error(
+    'ADMIN_USERNAME / ADMIN_PASSWORD missing. The admin tests read them from .env.local — ' +
+      'see ADMIN-CREDENTIALS.local.md, or run: npm run hash-password -- \'<passphrase>\'',
+  );
+}
+
 export type Lang = 'EN' | 'KA' | 'RU';
 
 /** Click the language toggle in the StatusBar. */
@@ -47,8 +61,8 @@ export async function adminLogin(page: Page) {
   await page.request.post('/api/auth/callback/credentials', {
     form: {
       csrfToken: csrf.csrfToken,
-      username: 'operator',
-      password: 'specimen2099',
+      username: ADMIN_USERNAME,
+      password: ADMIN_PASSWORD,
       json: 'true',
     },
   });
