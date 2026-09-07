@@ -341,12 +341,66 @@ interface FilterPanelProps {
 
 // ─── Component ───────────────────────────────────────────────
 export default function FilterPanel({ lang, filters, onFiltersChange, mobileOpen, onClose }: FilterPanelProps) {
-  // Lock page scroll behind the mobile bottom sheet.
+  const sheetRef = React.useRef<HTMLElement>(null);
+  const restoreFocusTo = React.useRef<HTMLElement | null>(null);
+
+  // The parent passes a fresh arrow for onClose on every render, so keep it in a
+  // ref: the modal effect below must depend on `mobileOpen` alone, or every
+  // filter change would tear it down and re-steal focus.
+  const onCloseRef = React.useRef(onClose);
+  React.useEffect(() => { onCloseRef.current = onClose; });
+
+  // Mobile bottom sheet = a modal surface. Lock page scroll, move focus in,
+  // keep Tab inside it, close on Escape, and hand focus back on close.
+  // (The backdrop's pointer-events only blocks the mouse — without a trap the
+  // controls behind it stay in the tab order.)
   React.useEffect(() => {
     if (!mobileOpen) return;
-    const prev = document.body.style.overflow;
+
+    restoreFocusTo.current = document.activeElement as HTMLElement | null;
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; };
+
+    const focusables = () =>
+      Array.from(
+        sheetRef.current?.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      ).filter((el) => !el.hasAttribute('disabled'));
+
+    focusables()[0]?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onCloseRef.current(); return; }
+      if (e.key !== 'Tab') return;
+      const list = focusables();
+      if (list.length === 0) return;
+      const first = list[0];
+      const last = list[list.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      const inside = !!active && !!sheetRef.current?.contains(active);
+      if (e.shiftKey && (!inside || active === first)) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (!inside || active === last)) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown, true);
+
+    // Resizing/rotating up to desktop turns the sheet back into a static rail —
+    // don't leave focus trapped in it.
+    const mq = window.matchMedia('(min-width: 821px)');
+    const onBreakpoint = () => { if (mq.matches) onCloseRef.current(); };
+    mq.addEventListener('change', onBreakpoint);
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown, true);
+      mq.removeEventListener('change', onBreakpoint);
+      document.body.style.overflow = prevOverflow;
+      restoreFocusTo.current?.focus?.();
+    };
   }, [mobileOpen]);
 
   const tanMin = 48, tanMax = 240;
@@ -363,7 +417,16 @@ export default function FilterPanel({ lang, filters, onFiltersChange, mobileOpen
   return (
     <>
       <SheetBackdrop $open={mobileOpen} onClick={onClose} aria-hidden="true" />
-      <RightRail $mobileOpen={mobileOpen} data-testid="filter-sheet">
+      <RightRail
+        ref={sheetRef}
+        $mobileOpen={mobileOpen}
+        data-testid="filter-sheet"
+        // Modal semantics belong to the mobile sheet only — on desktop this is a
+        // plain, always-visible sticky rail.
+        role={mobileOpen ? 'dialog' : undefined}
+        aria-modal={mobileOpen ? true : undefined}
+        aria-label={mobileOpen ? t(lang, 'filters.title') : undefined}
+      >
         <SheetGrabber aria-hidden="true" />
         <RailClose onClick={onClose}>✕ {t(lang, 'filters.title')}</RailClose>
         <FilterRail>

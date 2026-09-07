@@ -73,4 +73,25 @@ test.describe('Phase 4 — mobile filter bottom sheet', () => {
     await page.getByRole('button', { name: /შედეგების ჩვენება/ }).click();
     await expect(sheet).not.toBeInViewport();
   });
+
+  test('sheet is a focus-trapped dialog: focus moves in, Escape closes', async ({ page }) => {
+    await page.goto('/vault');
+    const sheet = page.getByTestId('filter-sheet');
+
+    await page.getByRole('button', { name: 'ფილტრები', exact: true }).click();
+    await expect(sheet).toBeInViewport();
+    await expect(sheet).toHaveAttribute('aria-modal', 'true');
+
+    // Focus must land inside the sheet, not stay on the page behind it.
+    await expect
+      .poll(() => sheet.evaluate((el) => el.contains(document.activeElement)))
+      .toBe(true);
+
+    // Tabbing must not escape into the controls hidden behind the backdrop.
+    for (let i = 0; i < 25; i++) await page.keyboard.press('Tab');
+    expect(await sheet.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+
+    await page.keyboard.press('Escape');
+    await expect(sheet).not.toBeInViewport();
+  });
 });
